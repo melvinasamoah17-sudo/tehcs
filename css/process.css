@@ -1,0 +1,92 @@
+/* =============================================
+   PROCESS PAGE — css/process.css
+============================================= */
+.pad { padding: 96px 0; }
+
+.proc-header { text-align:center; max-width:580px; margin:0 auto 80px; }
+.proc-header h2 { font-size:clamp(2.2rem,4.5vw,3.5rem); font-weight:900; color:var(--navy); margin-bottom:12px; }
+.proc-header p  { font-size:1rem; color:var(--tmid); font-weight:300; line-height:1.75; }
+
+/* ── STEPS ── */
+.proc-steps { display:flex; flex-direction:column; gap:0; max-width:960px; margin:0 auto; }
+
+.pstep { display:grid; grid-template-columns:100px 1fr; gap:0; align-items:stretch; }
+
+.pstep-num-col { display:flex; flex-direction:column; align-items:center; padding-top:6px; }
+.pstep-circle {
+  width:66px; height:66px; border-radius:50%;
+  display:flex; align-items:center; justify-content:center;
+  font-family:'Barlow Condensed',sans-serif; font-size:1.5rem; font-weight:900;
+  flex-shrink:0; position:relative; z-index:2;
+  transition:transform .3s;
+}
+.pstep:hover .pstep-circle { transform:scale(1.08); }
+.c1 { background:var(--gold);    color:var(--navy-dk); }
+.c2 { background:var(--navy);    color:#fff; }
+.c3 { background:var(--red);     color:#fff; }
+.c4 { background:var(--gold);    color:var(--navy-dk); }
+
+.pstep-line { width:3px; flex:1; margin:10px 0; border-radius:2px; }
+.pstep:nth-child(1) .pstep-line { background:linear-gradient(to bottom,var(--gold),var(--navy)); }
+.pstep:nth-child(2) .pstep-line { background:linear-gradient(to bottom,var(--navy),var(--red)); }
+.pstep:nth-child(3) .pstep-line { background:linear-gradient(to bottom,var(--red),var(--gold)); }
+
+/* card */
+.pstep-card {
+  display:grid; grid-template-columns:280px 1fr; gap:0;
+  background:var(--white); border-radius:var(--r-md); overflow:hidden;
+  border:1px solid var(--border);
+  margin:0 0 28px 20px;
+  transition:all .35s;
+}
+.pstep-card:hover { box-shadow:var(--sh-md); border-color:transparent; transform:translateX(4px); }
+
+.pstep-img { overflow:hidden; }
+.pstep-img img { width:100%; height:100%; object-fit:cover; min-height:220px; transition:transform .55s; }
+.pstep-card:hover .pstep-img img { transform:scale(1.05); }
+
+.pstep-body { padding:38px 36px; display:flex; flex-direction:column; justify-content:center; }
+.pstep-tag  {
+  font-family:'Barlow Condensed',sans-serif; font-size:.7rem; font-weight:700;
+  letter-spacing:.14em; text-transform:uppercase; color:var(--tmuted); margin-bottom:10px;
+}
+.pstep-body h3 { font-size:1.5rem; font-weight:900; color:var(--navy); text-transform:uppercase; letter-spacing:.02em; margin-bottom:14px; }
+.pstep-body p  { font-size:.96rem; line-height:1.8; color:var(--tmid); font-weight:300; }
+
+/* ── FAQ ── */
+.faq-head { text-align:center; max-width:540px; margin:0 auto 52px; }
+.faq-head h2 { font-size:clamp(2rem,4vw,3rem); font-weight:900; color:var(--navy); margin-bottom:12px; }
+
+.faq-list { max-width:740px; margin:0 auto; display:flex; flex-direction:column; gap:10px; }
+
+.faq-item { background:var(--off); border-radius:var(--r-sm); border:1px solid var(--border); overflow:hidden; }
+
+.faq-q {
+  padding:20px 24px; cursor:pointer;
+  display:flex; justify-content:space-between; align-items:center;
+  font-family:'Barlow Condensed',sans-serif; font-size:1.02rem; font-weight:700;
+  color:var(--navy); text-transform:uppercase; letter-spacing:.03em;
+  user-select:none; transition:background .2s;
+}
+.faq-q:hover { background:var(--light); }
+.faq-q::after { content:'+'; font-size:1.5rem; color:var(--gold); transition:transform .3s; flex-shrink:0; margin-left:14px; }
+.faq-item.open .faq-q::after { transform:rotate(45deg); }
+.faq-item.open .faq-q { background:var(--light); }
+
+.faq-a { max-height:0; overflow:hidden; transition:max-height .4s ease, padding .3s; padding:0 24px; }
+.faq-item.open .faq-a { max-height:200px; padding:0 24px 20px; }
+.faq-a p { font-size:.93rem; line-height:1.75; color:var(--tmid); font-weight:300; }
+
+/* RESPONSIVE */
+@media(max-width:900px){
+  .pstep-card { grid-template-columns:1fr; }
+  .pstep-img  { min-height:180px; height:180px; }
+  .pstep { grid-template-columns:70px 1fr; }
+  .pstep-circle { width:52px; height:52px; font-size:1.2rem; }
+  .pstep-body { padding:24px 22px; }
+}
+@media(max-width:600px){
+  .pstep { grid-template-columns:54px 1fr; }
+  .pstep-card { margin-left:12px; }
+  .pstep-body { padding:20px 18px; }
+}

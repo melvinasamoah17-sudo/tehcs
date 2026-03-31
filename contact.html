@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Contact Us — TEHCS</title>
+  <link rel="stylesheet" href="css/styles.css">
+  <link rel="stylesheet" href="css/contact.css">
+
+  <!-- EmailJS SDK -->
+  <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+
+  <style>
+    /* ── SUCCESS OVERLAY ── */
+    .success-overlay {
+      display: none;
+      position: fixed; inset: 0; z-index: 9999;
+      background: rgba(16,29,63,.92);
+      -webkit-backdrop-filter: blur(8px);
+      backdrop-filter: blur(8px);
+      align-items: center; justify-content: center;
+    }
+    .success-overlay.show { display: flex; animation: fadeUp .4s ease; }
+
+    .success-box {
+      background: #fff; border-radius: 24px;
+      padding: 56px 48px; text-align: center;
+      max-width: 480px; width: 90%;
+      box-shadow: 0 28px 64px rgba(0,0,0,.3);
+      position: relative;
+    }
+    .success-icon {
+      width: 80px; height: 80px; border-radius: 50%;
+      background: #eafaf1; display: flex; align-items: center;
+      justify-content: center; font-size: 2.4rem;
+      margin: 0 auto 22px;
+    }
+    .success-box h2 {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 2rem; font-weight: 900; color: var(--navy);
+      text-transform: uppercase; letter-spacing: .03em; margin-bottom: 12px;
+    }
+    .success-box p { font-size: .97rem; color: var(--tmid); line-height: 1.75; font-weight: 300; margin-bottom: 8px; }
+    .success-box p.success-delivery-note { font-size: .85rem; color: var(--tmuted); margin-top: 4px; }
+    .success-box p.success-confirmation { font-size: .84rem; color: var(--tmuted); }
+    .success-channels {
+      display: flex; gap: 10px; justify-content: center; margin: 22px 0;
+    }
+    .success-channel {
+      background: var(--off); border-radius: 10px;
+      padding: 10px 18px; font-size: .82rem; font-weight: 600;
+      color: var(--navy); display: flex; align-items: center; gap: 6px;
+      border: 1px solid var(--border);
+    }
+    .success-close {
+      background: var(--navy); color: #fff; border: none;
+      border-radius: 100px; padding: 13px 32px; cursor: pointer;
+      font-family: 'Barlow Condensed', sans-serif; font-size: 1rem;
+      font-weight: 700; letter-spacing: .06em; text-transform: uppercase;
+      transition: all .25s; margin-top: 8px;
+    }
+    .success-close:hover { background: var(--gold); color: var(--navy-dk); }
+
+    /* ── SPINNER inside button ── */
+    .submit-btn.loading {
+      pointer-events: none; opacity: .75;
+      display: flex; align-items: center; justify-content: center; gap: 10px;
+    }
+    .spinner {
+      display: none; width: 18px; height: 18px; border-radius: 50%;
+      border: 3px solid rgba(255,255,255,.35);
+      border-top-color: #fff; animation: spin .7s linear infinite;
+    }
+    .submit-btn.loading .spinner { display: block; }
+    @keyframes spin { to { rotate: 360deg; } }
+
+    /* ── ERROR msg ── */
+    .form-error {
+      display: none; background: #fef2f2; border: 1px solid #fca5a5;
+      border-radius: 10px; padding: 14px 18px; margin-bottom: 18px;
+      font-size: .9rem; color: #b91c1c; font-weight: 400; line-height: 1.6;
+    }
+    .form-error.show { display: block; animation: fadeUp .3s ease; }
+    
+    .label.contact-info { margin-top: 32px; }
+    
+    .ci-whatsapp { background: rgba(37,211,102,.12); }
+  </style>
+</head>
+<body>
+
+<div id="nav-mount"></div>
+
+<!-- SUCCESS OVERLAY -->
+<div class="success-overlay" id="successOverlay">
+  <div class="success-box">
+    <div class="success-icon">✅</div>
+    <h2>Message Sent!</h2>
+    <p>Thank you for reaching out to <strong>TEHCS</strong>. Your request has been received and we'll get back to you within <strong>24 hours</strong>.</p>
+    <p class="success-delivery-note">Your message was delivered via:</p>
+    <div class="success-channels">
+      <div class="success-channel">📧 Email</div>
+      <div class="success-channel">💬 WhatsApp</div>
+    </div>
+    <p class="success-confirmation">A confirmation has also been sent to your email address.</p>
+    <button type="button" class="success-close" onclick="closeSuccess()">Close</button>
+  </div>
+</div>
+
+<div class="page-hero">
+  <p class="page-hero-bc"><a href="index.html">Home</a> / Contact</p>
+  <h1>Get In <span>Touch</span></h1>
+  <p>Whether you need care, construction or household support — reach out and our team will respond within 24 hours.</p>
+</div>
+
+<section class="pad bg-off">
+  <div class="container">
+    <div class="contact-grid">
+
+      <!-- LEFT INFO -->
+      <div class="c-info rv-l">
+        <div class="c-hero-img">
+          <img
+            src="https://images.unsplash.com/photo-1582750433449-648ed127bb54?w=900&q=80&fit=crop&crop=top"
+            alt="TEHCS professional care team"
+            loading="lazy"
+          >
+          <div class="c-hero-overlay">
+            <span class="c-hero-tag">Ghana &amp; United Kingdom</span>
+          </div>
+        </div>
+
+        <span class="label contact-info">Contact Information</span>
+        <h2>We'd love to<br>hear from you.</h2>
+        <p>Our team is available across Ghana and the United Kingdom. Call, email, or fill in the form and we'll come to you.</p>
+
+        <div class="c-items">
+          <a href="tel:+447448468070" class="c-item">
+            <div class="ci-ico ci-gold">📞</div>
+            <div>
+              <div class="ci-lbl">UK Number</div>
+              <div class="ci-val">+44 7448 468070</div>
+            </div>
+          </a>
+          <a href="tel:+233240699329" class="c-item">
+            <div class="ci-ico ci-red">📱</div>
+            <div>
+              <div class="ci-lbl">Ghana Number</div>
+              <div class="ci-val">+233 240 699 329</div>
+            </div>
+          </a>
+          <a href="tel:0302449719" class="c-item">
+            <div class="ci-ico ci-navy">☎️</div>
+            <div>
+              <div class="ci-lbl">Landline (Ghana)</div>
+              <div class="ci-val">030 244 9719</div>
+            </div>
+          </a>
+          <a href="mailto:twitchempireinfo@gmail.com" class="c-item">
+            <div class="ci-ico ci-gold">✉️</div>
+            <div>
+              <div class="ci-lbl">Email Address</div>
+              <div class="ci-val">twitchempireinfo@gmail.com</div>
+            </div>
+          </a>
+          <a href="https://wa.me/233240699329" target="_blank" rel="noopener" class="c-item">
+            <div class="ci-ico ci-whatsapp">💬</div>
+            <div>
+              <div class="ci-lbl">WhatsApp</div>
+              <div class="ci-val">Chat with us on WhatsApp</div>
+            </div>
+          </a>
+        </div>
+      </div>
+
+      <!-- RIGHT FORM -->
+      <div class="c-form-box rv-r">
+        <h3>Send us a message</h3>
+        <p class="c-form-sub">Fill out the form and we'll contact you by email and WhatsApp within 24 hours.</p>
+
+        <!-- Error banner -->
+        <div class="form-error" id="formError">
+          ⚠️ Something went wrong. Please try again or contact us directly at
+          <a href="mailto:twitchempireinfo@gmail.com">twitchempireinfo@gmail.com</a>
+        </div>
+
+        <form id="contact-form" novalidate>
+
+          <div class="f-row-2">
+            <div class="f-group">
+              <label for="fname">First Name *</label>
+              <input type="text" id="fname" name="fname" placeholder="John" required>
+            </div>
+            <div class="f-group">
+              <label for="lname">Last Name *</label>
+              <input type="text" id="lname" name="lname" placeholder="Mensah" required>
+            </div>
+          </div>
+
+          <div class="f-group">
+            <label for="email">Email Address *</label>
+            <input type="email" id="email" name="email" placeholder="you@example.com" required>
+          </div>
+
+          <div class="f-group">
+            <label for="phone">Phone / WhatsApp Number *</label>
+            <input type="tel" id="phone" name="phone" placeholder="+233 or +44..." required>
+          </div>
+
+          <div class="f-row-2">
+            <div class="f-group">
+              <label for="country">Country</label>
+              <select id="country" name="country">
+                <option value="" disabled selected>Select...</option>
+                <option>Ghana</option>
+                <option>United Kingdom</option>
+                <option>Other</option>
+              </select>
+            </div>
+            <div class="f-group">
+              <label for="service">Service Needed</label>
+              <select id="service" name="service">
+                <option value="" disabled selected>Select...</option>
+                <optgroup label="Home Health Care">
+                  <option>Doctor Visit</option>
+                  <option>Personal Care</option>
+                  <option>Senior Care</option>
+                  <option>Occupational Therapy</option>
+                  <option>Companionship</option>
+                  <option>Medication Reminders</option>
+                </optgroup>
+                <optgroup label="Construction">
+                  <option>Plumbing</option>
+                  <option>Electrical</option>
+                  <option>Painting</option>
+                  <option>Interior Decoration</option>
+                  <option>Carpentry</option>
+                  <option>Building</option>
+                  <option>Gardening</option>
+                </optgroup>
+                <optgroup label="Non-Medical">
+                  <option>Housekeeping</option>
+                  <option>Nanny / Childcare</option>
+                  <option>Cook / Chef</option>
+                  <option>Laundry</option>
+                  <option>Driver</option>
+                  <option>Office Cleaning</option>
+                </optgroup>
+                <option>Multiple Services</option>
+                <option>Other</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="f-group">
+            <label for="msg">Message *</label>
+            <textarea id="msg" name="msg" placeholder="Tell us about your needs, timeline, or any other details..." rows="5" required></textarea>
+          </div>
+
+          <button type="submit" class="submit-btn" id="submitBtn">
+            <div class="spinner"></div>
+            <span id="submitText">Send My Request →</span>
+          </button>
+
+        </form>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- QUICK TILES -->
+<div class="quick-tiles bg-navy">
+  <div class="container">
+    <div class="qt-grid rv">
+      <div class="qt-card">
+        <span>🩺</span>
+        <h4>Need Home Health Care?</h4>
+        <p>We can arrange a professional nurse or doctor visit within 24–72 hours.</p>
+        <a href="services.html">Learn More →</a>
+      </div>
+      <div class="qt-card">
+        <span>🏗️</span>
+        <h4>Construction Project?</h4>
+        <p>From single trades to full builds — free quotes and transparent pricing.</p>
+        <a href="services.html">Learn More →</a>
+      </div>
+      <div class="qt-card">
+        <span>🏡</span>
+        <h4>Household Support?</h4>
+        <p>Cleaners, cooks, nannies, drivers — reliable support for everyday life.</p>
+        <a href="services.html">Learn More →</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="footer-mount"></div>
+
+<script src="js/partials.js"></script>
+<script src="js/main.js"></script>
+<script>
+/* =====================================================
+   TEHCS FORM HANDLER
+   Uses: EmailJS (email) + CallMeBot (WhatsApp)
+   
+   !! SETUP REQUIRED — see SETUP-GUIDE.md !!
+   Replace the placeholder values below with your real keys
+===================================================== */
+
+// ── CONFIGURATION — fill these in after setup ──────
+var CONFIG = {
+
+  // EmailJS (https://www.emailjs.com)
+  EMAILJS_PUBLIC_KEY:   'YOUR_EMAILJS_PUBLIC_KEY',   // e.g. 'abc123XYZ'
+  EMAILJS_SERVICE_ID:   'YOUR_EMAILJS_SERVICE_ID',   // e.g. 'service_xxxxxxx'
+  EMAILJS_TEMPLATE_BUSINESS: 'YOUR_TEMPLATE_ID_BUSINESS', // template sent to TEHCS
+  EMAILJS_TEMPLATE_CLIENT:   'YOUR_TEMPLATE_ID_CLIENT',   // confirmation sent to client
+
+  // CallMeBot WhatsApp (https://www.callmebot.com/blog/free-api-whatsapp-messages/)
+  CALLMEBOT_PHONE:  '233240699329',    // Ghana WhatsApp number (no + sign)
+  CALLMEBOT_APIKEY: 'YOUR_CALLMEBOT_APIKEY', // given after you activate CallMeBot
+};
+// ────────────────────────────────────────────────────
+
+// Init EmailJS
+emailjs.init(CONFIG.EMAILJS_PUBLIC_KEY);
+
+document.getElementById('contact-form').addEventListener('submit', async function(e) {
+  e.preventDefault();
+
+  var btn      = document.getElementById('submitBtn');
+  var btnText  = document.getElementById('submitText');
+  var errBanner = document.getElementById('formError');
+
+  // Basic validation
+  var fname   = document.getElementById('fname').value.trim();
+  var lname   = document.getElementById('lname').value.trim();
+  var email   = document.getElementById('email').value.trim();
+  var phone   = document.getElementById('phone').value.trim();
+  var country = document.getElementById('country').value;
+  var service = document.getElementById('service').value;
+  var msg     = document.getElementById('msg').value.trim();
+
+  if (!fname || !lname || !email || !phone || !msg) {
+    errBanner.textContent = '⚠️ Please fill in all required fields (marked with *).';
+    errBanner.classList.add('show');
+    errBanner.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    return;
+  }
+
+  // Show loading state
+  btn.classList.add('loading');
+  btnText.textContent = 'Sending...';
+  errBanner.classList.remove('show');
+
+  var fullName    = fname + ' ' + lname;
+  var timestamp   = new Date().toLocaleString('en-GB', { timeZone: 'Africa/Accra' });
+
+  // Template variables sent to EmailJS
+  var templateParams = {
+    from_name:   fullName,
+    from_email:  email,
+    phone:       phone,
+    country:     country  || 'Not specified',
+    service:     service  || 'Not specified',
+    message:     msg,
+    timestamp:   timestamp,
+    reply_to:    email,
+  };
+
+  try {
+
+    // ── 1. Email to TEHCS (business notification) ──────────────
+    await emailjs.send(
+      CONFIG.EMAILJS_SERVICE_ID,
+      CONFIG.EMAILJS_TEMPLATE_BUSINESS,
+      templateParams
+    );
+
+    // ── 2. Confirmation email to client ────────────────────────
+    await emailjs.send(
+      CONFIG.EMAILJS_SERVICE_ID,
+      CONFIG.EMAILJS_TEMPLATE_CLIENT,
+      templateParams
+    );
+
+    // ── 3. WhatsApp to TEHCS via CallMeBot ─────────────────────
+    var waMessage = encodeURIComponent(
+      '🏠 *New TEHCS Enquiry*\n\n' +
+      '👤 Name: '    + fullName             + '\n' +
+      '📧 Email: '   + email                + '\n' +
+      '📞 Phone: '   + phone                + '\n' +
+      '🌍 Country: ' + (country || 'N/A')   + '\n' +
+      '🔧 Service: ' + (service || 'N/A')   + '\n\n' +
+      '💬 Message:\n' + msg                  + '\n\n' +
+      '🕐 Sent: '    + timestamp
+    );
+
+    var waUrl = 'https://api.callmebot.com/whatsapp.php' +
+      '?phone='   + CONFIG.CALLMEBOT_PHONE +
+      '&text='    + waMessage +
+      '&apikey='  + CONFIG.CALLMEBOT_APIKEY;
+
+    // Use no-cors fetch for CallMeBot (browser limitation)
+    fetch(waUrl, { method: 'GET', mode: 'no-cors' }).catch(function() {
+      // WhatsApp delivery is best-effort — don't block success on this
+      console.warn('WhatsApp ping sent (no-cors, response not readable)');
+    });
+
+    // ── SUCCESS ─────────────────────────────────────────────────
+    btn.classList.remove('loading');
+    btnText.textContent = 'Send My Request →';
+    document.getElementById('contact-form').reset();
+    document.getElementById('successOverlay').classList.add('show');
+
+  } catch (error) {
+    console.error('TEHCS form error:', error);
+    btn.classList.remove('loading');
+    btnText.textContent = 'Send My Request →';
+    errBanner.innerHTML = '⚠️ Something went wrong. Please try again or contact us directly at ' +
+      '<a href="mailto:twitchempireinfo@gmail.com">twitchempireinfo@gmail.com</a> or ' +
+      '<a href="tel:+233240699329">+233 240 699 329</a>.';
+    errBanner.classList.add('show');
+  }
+});
+
+function closeSuccess() {
+  document.getElementById('successOverlay').classList.remove('show');
+}
+
+// Close overlay on background click
+document.getElementById('successOverlay').addEventListener('click', function(e) {
+  if (e.target === this) closeSuccess();
+});
+</script>
+
+</body>
+</html>
