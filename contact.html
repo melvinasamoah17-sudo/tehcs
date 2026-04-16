@@ -170,6 +170,14 @@
               <div class="ci-val">Chat with us on WhatsApp</div>
             </div>
           </a>
+
+          <a href="https://wa.me/00447448468070" target="_blank" rel="noopener" class="c-item">
+            <div class="ci-ico ci-whatsapp">💬</div>
+            <div>
+              <div class="ci-lbl">WhatsApp</div>
+              <div class="ci-val">Chat with us on WhatsApp via our UK Number</div>
+            </div>
+          </a>
         </div>
       </div>
 
@@ -189,11 +197,11 @@
           <div class="f-row-2">
             <div class="f-group">
               <label for="fname">First Name *</label>
-              <input type="text" id="fname" name="fname" placeholder="John" required>
+              <input type="text" id="fname" name="fname" placeholder="" required>
             </div>
             <div class="f-group">
               <label for="lname">Last Name *</label>
-              <input type="text" id="lname" name="lname" placeholder="Mensah" required>
+              <input type="text" id="lname" name="lname" placeholder="" required>
             </div>
           </div>
 
@@ -308,17 +316,15 @@
    Replace the placeholder values below with your real keys
 ===================================================== */
 
-// ── CONFIGURATION — fill these in after setup ──────
 var CONFIG = {
 
-  // EmailJS (https://www.emailjs.com)
-  EMAILJS_PUBLIC_KEY:   'YOUR_EMAILJS_PUBLIC_KEY',   // e.g. 'abc123XYZ'
-  EMAILJS_SERVICE_ID:   'YOUR_EMAILJS_SERVICE_ID',   // e.g. 'service_xxxxxxx'
-  EMAILJS_TEMPLATE_BUSINESS: 'YOUR_TEMPLATE_ID_BUSINESS', // template sent to TEHCS
-  EMAILJS_TEMPLATE_CLIENT:   'YOUR_TEMPLATE_ID_CLIENT',   // confirmation sent to client
+  EMAILJS_PUBLIC_KEY:   'L79E9hHNieJbHYZL0',  
+  EMAILJS_SERVICE_ID:   'service_g0m8tdi',   
+  EMAILJS_TEMPLATE_BUSINESS: 'template_kswcorr', 
+  EMAILJS_TEMPLATE_CLIENT:   'template_zljgoy6',   
 
   // CallMeBot WhatsApp (https://www.callmebot.com/blog/free-api-whatsapp-messages/)
-  CALLMEBOT_PHONE:  '233240699329',    // Ghana WhatsApp number (no + sign)
+  CALLMEBOT_PHONE:  '233240699329' + '|' + '00447448468070',    // Ghana WhatsApp number (no + sign)
   CALLMEBOT_APIKEY: 'YOUR_CALLMEBOT_APIKEY', // given after you activate CallMeBot
 };
 // ────────────────────────────────────────────────────
