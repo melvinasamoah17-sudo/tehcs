@@ -7,84 +7,84 @@
   <link rel="stylesheet" href="css/styles.css">
   <link rel="stylesheet" href="css/contact.css">
 
-  <!-- EmailJS SDK -->
+  <!-- EmailJS -->
   <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
 
   <style>
     /* ── SUCCESS OVERLAY ── */
     .success-overlay {
-      display: none;
-      position: fixed; inset: 0; z-index: 9999;
-      background: rgba(16,29,63,.92);
-      -webkit-backdrop-filter: blur(8px);
-      backdrop-filter: blur(8px);
-      align-items: center; justify-content: center;
+      display:none; position:fixed; inset:0; z-index:9999;
+      background:rgba(16,29,63,.92); backdrop-filter:blur(8px);
+      align-items:center; justify-content:center;
     }
-    .success-overlay.show { display: flex; animation: fadeUp .4s ease; }
-
+    .success-overlay.show { display:flex; animation:fadeUp .4s ease; }
     .success-box {
-      background: #fff; border-radius: 24px;
-      padding: 56px 48px; text-align: center;
-      max-width: 480px; width: 90%;
-      box-shadow: 0 28px 64px rgba(0,0,0,.3);
-      position: relative;
+      background:#fff; border-radius:24px; padding:52px 44px;
+      text-align:center; max-width:460px; width:90%;
+      box-shadow:0 28px 64px rgba(0,0,0,.3); position:relative;
     }
     .success-icon {
-      width: 80px; height: 80px; border-radius: 50%;
-      background: #eafaf1; display: flex; align-items: center;
-      justify-content: center; font-size: 2.4rem;
-      margin: 0 auto 22px;
+      width:76px; height:76px; border-radius:50%;
+      background:#eafaf1; display:flex; align-items:center;
+      justify-content:center; font-size:2.2rem; margin:0 auto 20px;
     }
     .success-box h2 {
-      font-family: 'Barlow Condensed', sans-serif;
-      font-size: 2rem; font-weight: 900; color: var(--navy);
-      text-transform: uppercase; letter-spacing: .03em; margin-bottom: 12px;
+      font-family:'Barlow Condensed',sans-serif; font-size:1.9rem;
+      font-weight:900; color:var(--navy); text-transform:uppercase;
+      letter-spacing:.03em; margin-bottom:12px;
     }
-    .success-box p { font-size: .97rem; color: var(--tmid); line-height: 1.75; font-weight: 300; margin-bottom: 8px; }
-    .success-box p.success-delivery-note { font-size: .85rem; color: var(--tmuted); margin-top: 4px; }
-    .success-box p.success-confirmation { font-size: .84rem; color: var(--tmuted); }
-    .success-channels {
-      display: flex; gap: 10px; justify-content: center; margin: 22px 0;
-    }
+    .success-box p { font-size:.95rem; color:var(--tmid); line-height:1.75; font-weight:300; margin-bottom:6px; }
+    .success-channels { display:flex; gap:10px; justify-content:center; margin:20px 0; flex-wrap:wrap; }
     .success-channel {
-      background: var(--off); border-radius: 10px;
-      padding: 10px 18px; font-size: .82rem; font-weight: 600;
-      color: var(--navy); display: flex; align-items: center; gap: 6px;
-      border: 1px solid var(--border);
+      background:var(--off); border-radius:10px; padding:9px 16px;
+      font-size:.82rem; font-weight:600; color:var(--navy);
+      display:flex; align-items:center; gap:6px; border:1px solid var(--border);
     }
     .success-close {
-      background: var(--navy); color: #fff; border: none;
-      border-radius: 100px; padding: 13px 32px; cursor: pointer;
-      font-family: 'Barlow Condensed', sans-serif; font-size: 1rem;
-      font-weight: 700; letter-spacing: .06em; text-transform: uppercase;
-      transition: all .25s; margin-top: 8px;
+      background:var(--navy); color:#fff; border:none; border-radius:100px;
+      padding:13px 32px; cursor:pointer; margin-top:10px;
+      font-family:'Barlow Condensed',sans-serif; font-size:1rem;
+      font-weight:800; letter-spacing:.07em; text-transform:uppercase;
+      transition:all .25s;
     }
-    .success-close:hover { background: var(--gold); color: var(--navy-dk); }
+    .success-close:hover { background:var(--gold); color:var(--navy-dk); }
 
-    /* ── SPINNER inside button ── */
-    .submit-btn.loading {
-      pointer-events: none; opacity: .75;
-      display: flex; align-items: center; justify-content: center; gap: 10px;
-    }
+    /* ── SPINNER ── */
+    .submit-btn { display:flex; align-items:center; justify-content:center; gap:10px; }
     .spinner {
-      display: none; width: 18px; height: 18px; border-radius: 50%;
-      border: 3px solid rgba(255,255,255,.35);
-      border-top-color: #fff; animation: spin .7s linear infinite;
+      display:none; width:18px; height:18px; border-radius:50%;
+      border:3px solid rgba(255,255,255,.3); border-top-color:#fff;
+      animation:spin .7s linear infinite;
     }
-    .submit-btn.loading .spinner { display: block; }
-    @keyframes spin { to { rotate: 360deg; } }
+    .submit-btn.loading .spinner { display:block; }
+    .submit-btn.loading { pointer-events:none; opacity:.75; }
 
-    /* ── ERROR msg ── */
+    /* ── ERROR ── */
     .form-error {
-      display: none; background: #fef2f2; border: 1px solid #fca5a5;
-      border-radius: 10px; padding: 14px 18px; margin-bottom: 18px;
-      font-size: .9rem; color: #b91c1c; font-weight: 400; line-height: 1.6;
+      display:none; background:#fef2f2; border:1px solid #fca5a5;
+      border-radius:10px; padding:13px 16px; margin-bottom:16px;
+      font-size:.88rem; color:#b91c1c; line-height:1.55;
     }
-    .form-error.show { display: block; animation: fadeUp .3s ease; }
-    
-    .label.contact-info { margin-top: 32px; }
-    
-    .ci-whatsapp { background: rgba(37,211,102,.12); }
+    .form-error.show { display:block; animation:fadeUp .3s ease; }
+
+    /* ── PROGRESS STEPS ── */
+    .sending-steps {
+      display:none; flex-direction:column; gap:8px;
+      margin-bottom:16px; padding:14px 16px;
+      background:var(--off); border-radius:10px; border:1px solid var(--border);
+    }
+    .sending-steps.show { display:flex; }
+    .step-row { display:flex; align-items:center; gap:10px; font-size:.85rem; color:var(--tmuted); }
+    .step-row.done  { color:var(--green, #16a34a); }
+    .step-row.active { color:var(--navy); font-weight:600; }
+    .step-dot { width:18px; height:18px; border-radius:50%; flex-shrink:0; display:flex; align-items:center; justify-content:center; font-size:.7rem; }
+    .step-row.done   .step-dot { background:#dcfce7; color:#16a34a; }
+    .step-row.active .step-dot { background:var(--navy); color:#fff; animation:pulse 1s infinite; }
+    .step-row.wait   .step-dot { background:var(--light); color:var(--tmuted); }
+
+    @keyframes fadeUp { from{opacity:0;transform:translateY(18px)} to{opacity:1;transform:none} }
+    @keyframes spin   { to{transform:rotate(360deg)} }
+    @keyframes pulse  { 0%,100%{opacity:1} 50%{opacity:.5} }
   </style>
 </head>
 <body>
@@ -97,16 +97,17 @@
     <div class="success-icon">✅</div>
     <h2>Message Sent!</h2>
     <p>Thank you for reaching out to <strong>TEHCS</strong>. Your request has been received and we'll get back to you within <strong>24 hours</strong>.</p>
-    <p class="success-delivery-note">Your message was delivered via:</p>
+    <p style="font-size:.84rem;color:var(--tmuted);margin-top:6px;">Your message was delivered via:</p>
     <div class="success-channels">
-      <div class="success-channel">📧 Email</div>
-      <div class="success-channel">💬 WhatsApp</div>
+      <div class="success-channel">📧 Email to TEHCS</div>
+      <div class="success-channel">📋 Saved to Dashboard</div>
+      <div class="success-channel">📩 Confirmation sent to you</div>
     </div>
-    <p class="success-confirmation">A confirmation has also been sent to your email address.</p>
-    <button type="button" class="success-close" onclick="closeSuccess()">Close</button>
+    <button class="success-close" onclick="closeSuccess()">Close</button>
   </div>
 </div>
 
+<!-- PAGE HERO -->
 <div class="page-hero">
   <p class="page-hero-bc"><a href="index.html">Home</a> / Contact</p>
   <h1>Get In <span>Touch</span></h1>
@@ -130,9 +131,9 @@
           </div>
         </div>
 
-        <span class="label contact-info">Contact Information</span>
+        <span class="label" style="margin-top:32px;">Contact Information</span>
         <h2>We'd love to<br>hear from you.</h2>
-        <p>Our team is available across Ghana and the United Kingdom. Call, email, or fill in the form and we'll come to you.</p>
+        <p>Our team is available across Ghana and the United Kingdom. Call, email, or fill in the form and we'll get back to you within 24 hours.</p>
 
         <div class="c-items">
           <a href="tel:+447448468070" class="c-item">
@@ -163,19 +164,11 @@
               <div class="ci-val">twitchempireinfo@gmail.com</div>
             </div>
           </a>
-          <a href="https://wa.me/233240699329" target="_blank" rel="noopener" class="c-item">
-            <div class="ci-ico ci-whatsapp">💬</div>
+          <a href="https://wa.me/233240699329" target="_blank" class="c-item">
+            <div class="ci-ico" style="background:rgba(37,211,102,.12);">💬</div>
             <div>
               <div class="ci-lbl">WhatsApp</div>
               <div class="ci-val">Chat with us on WhatsApp</div>
-            </div>
-          </a>
-
-          <a href="https://wa.me/+447448468070" target="_blank" rel="noopener" class="c-item">
-            <div class="ci-ico ci-whatsapp">💬</div>
-            <div>
-              <div class="ci-lbl">WhatsApp</div>
-              <div class="ci-val">Chat with us on WhatsApp via our UK Number</div>
             </div>
           </a>
         </div>
@@ -184,37 +177,46 @@
       <!-- RIGHT FORM -->
       <div class="c-form-box rv-r">
         <h3>Send us a message</h3>
-        <p class="c-form-sub">Fill out the form and we'll contact you by email and WhatsApp within 24 hours.</p>
+        <p class="c-form-sub">Fill out the form and we'll contact you within 24 hours.</p>
 
-        <!-- Error banner -->
-        <div class="form-error" id="formError">
-          ⚠️ Something went wrong. Please try again or contact us directly at
-          <a href="mailto:twitchempireinfo@gmail.com">twitchempireinfo@gmail.com</a>
+        <!-- Error -->
+        <div class="form-error" id="formError"></div>
+
+        <!-- Progress steps -->
+        <div class="sending-steps" id="sendingSteps">
+          <div class="step-row wait" id="step1">
+            <div class="step-dot">1</div>
+            <span>Sending email to TEHCS...</span>
+          </div>
+          <div class="step-row wait" id="step2">
+            <div class="step-dot">2</div>
+            <span>Sending confirmation to you...</span>
+          </div>
+          <div class="step-row wait" id="step3">
+            <div class="step-dot">3</div>
+            <span>Saving to admin dashboard...</span>
+          </div>
         </div>
 
         <form id="contact-form" novalidate>
-
           <div class="f-row-2">
             <div class="f-group">
               <label for="fname">First Name *</label>
-              <input type="text" id="fname" name="fname" placeholder="" required>
+              <input type="text" id="fname" name="fname" placeholder="John" required>
             </div>
             <div class="f-group">
               <label for="lname">Last Name *</label>
-              <input type="text" id="lname" name="lname" placeholder="" required>
+              <input type="text" id="lname" name="lname" placeholder="Mensah" required>
             </div>
           </div>
-
           <div class="f-group">
             <label for="email">Email Address *</label>
             <input type="email" id="email" name="email" placeholder="you@example.com" required>
           </div>
-
           <div class="f-group">
             <label for="phone">Phone / WhatsApp Number *</label>
             <input type="tel" id="phone" name="phone" placeholder="+233 or +44..." required>
           </div>
-
           <div class="f-row-2">
             <div class="f-group">
               <label for="country">Country</label>
@@ -259,7 +261,6 @@
               </select>
             </div>
           </div>
-
           <div class="f-group">
             <label for="msg">Message *</label>
             <textarea id="msg" name="msg" placeholder="Tell us about your needs, timeline, or any other details..." rows="5" required></textarea>
@@ -269,7 +270,6 @@
             <div class="spinner"></div>
             <span id="submitText">Send My Request →</span>
           </button>
-
         </form>
       </div>
 
@@ -304,141 +304,160 @@
 </div>
 
 <div id="footer-mount"></div>
-
 <script src="js/partials.js"></script>
 <script src="js/main.js"></script>
-<script>
-/* =====================================================
-   TEHCS FORM HANDLER
-   Uses: EmailJS (email) + CallMeBot (WhatsApp)
-   
-   !! SETUP REQUIRED — see SETUP-GUIDE.md !!
-   Replace the placeholder values below with your real keys
-===================================================== */
 
-var CONFIG = {
+<!-- Firebase + Form Handler -->
+<script type="module">
+  import { initializeApp }     from "https://www.gstatic.com/firebasejs/12.13.0/firebase-app.js";
+  import { getFirestore, collection, addDoc, serverTimestamp }
+    from "https://www.gstatic.com/firebasejs/12.13.0/firebase-firestore.js";
 
-  EMAILJS_PUBLIC_KEY:   'L79E9hHNieJbHYZL0',  
-  EMAILJS_SERVICE_ID:   'service_g0m8tdi',   
-  EMAILJS_TEMPLATE_BUSINESS: 'template_kswcorr', 
-  EMAILJS_TEMPLATE_CLIENT:   'template_zljgoy6',   
-
-  // CallMeBot WhatsApp (https://www.callmebot.com/blog/free-api-whatsapp-messages/)
-  CALLMEBOT_PHONE:  '233240699329' + '|' + '00447448468070',    // Ghana WhatsApp number (no + sign)
-  CALLMEBOT_APIKEY: 'YOUR_CALLMEBOT_APIKEY', // given after you activate CallMeBot
-};
-// ────────────────────────────────────────────────────
-
-// Init EmailJS
-emailjs.init(CONFIG.EMAILJS_PUBLIC_KEY);
-
-document.getElementById('contact-form').addEventListener('submit', async function(e) {
-  e.preventDefault();
-
-  var btn      = document.getElementById('submitBtn');
-  var btnText  = document.getElementById('submitText');
-  var errBanner = document.getElementById('formError');
-
-  // Basic validation
-  var fname   = document.getElementById('fname').value.trim();
-  var lname   = document.getElementById('lname').value.trim();
-  var email   = document.getElementById('email').value.trim();
-  var phone   = document.getElementById('phone').value.trim();
-  var country = document.getElementById('country').value;
-  var service = document.getElementById('service').value;
-  var msg     = document.getElementById('msg').value.trim();
-
-  if (!fname || !lname || !email || !phone || !msg) {
-    errBanner.textContent = '⚠️ Please fill in all required fields (marked with *).';
-    errBanner.classList.add('show');
-    errBanner.scrollIntoView({ behavior: 'smooth', block: 'center' });
-    return;
-  }
-
-  // Show loading state
-  btn.classList.add('loading');
-  btnText.textContent = 'Sending...';
-  errBanner.classList.remove('show');
-
-  var fullName    = fname + ' ' + lname;
-  var timestamp   = new Date().toLocaleString('en-GB', { timeZone: 'Africa/Accra' });
-
-  // Template variables sent to EmailJS
-  var templateParams = {
-    from_name:   fullName,
-    from_email:  email,
-    phone:       phone,
-    country:     country  || 'Not specified',
-    service:     service  || 'Not specified',
-    message:     msg,
-    timestamp:   timestamp,
-    reply_to:    email,
+  // ── Firebase config ──
+  const firebaseConfig = {
+    apiKey:            "AIzaSyBg_fCZkhkzNr41f6xespzlRucs6wVk9ck",
+    authDomain:        "tehcs-675c6.firebaseapp.com",
+    projectId:         "tehcs-675c6",
+    storageBucket:     "tehcs-675c6.firebasestorage.app",
+    messagingSenderId: "428200196151",
+    appId:             "1:428200196151:web:2dee682eda618b2ac7e7b2"
   };
 
-  try {
+  const app = initializeApp(firebaseConfig);
+  const db  = getFirestore(app);
 
-    // ── 1. Email to TEHCS (business notification) ──────────────
-    await emailjs.send(
-      CONFIG.EMAILJS_SERVICE_ID,
-      CONFIG.EMAILJS_TEMPLATE_BUSINESS,
-      templateParams
-    );
+  // ── EmailJS config ──
+  const EMAILJS = {
+    PUBLIC_KEY:        'L79E9hHNieJbHYZL0',
+    SERVICE_ID:        'service_g0m8tdi',
+    TEMPLATE_BUSINESS: 'template_kswcorr',
+    TEMPLATE_CLIENT:   'template_zljgoy6',
+  };
 
-    // ── 2. Confirmation email to client ────────────────────────
-    await emailjs.send(
-      CONFIG.EMAILJS_SERVICE_ID,
-      CONFIG.EMAILJS_TEMPLATE_CLIENT,
-      templateParams
-    );
+  emailjs.init(EMAILJS.PUBLIC_KEY);
 
-    // ── 3. WhatsApp to TEHCS via CallMeBot ─────────────────────
-    var waMessage = encodeURIComponent(
-      '🏠 *New TEHCS Enquiry*\n\n' +
-      '👤 Name: '    + fullName             + '\n' +
-      '📧 Email: '   + email                + '\n' +
-      '📞 Phone: '   + phone                + '\n' +
-      '🌍 Country: ' + (country || 'N/A')   + '\n' +
-      '🔧 Service: ' + (service || 'N/A')   + '\n\n' +
-      '💬 Message:\n' + msg                  + '\n\n' +
-      '🕐 Sent: '    + timestamp
-    );
-
-    var waUrl = 'https://api.callmebot.com/whatsapp.php' +
-      '?phone='   + CONFIG.CALLMEBOT_PHONE +
-      '&text='    + waMessage +
-      '&apikey='  + CONFIG.CALLMEBOT_APIKEY;
-
-    // Use no-cors fetch for CallMeBot (browser limitation)
-    fetch(waUrl, { method: 'GET', mode: 'no-cors' }).catch(function() {
-      // WhatsApp delivery is best-effort — don't block success on this
-      console.warn('WhatsApp ping sent (no-cors, response not readable)');
-    });
-
-    // ── SUCCESS ─────────────────────────────────────────────────
-    btn.classList.remove('loading');
-    btnText.textContent = 'Send My Request →';
-    document.getElementById('contact-form').reset();
-    document.getElementById('successOverlay').classList.add('show');
-
-  } catch (error) {
-    console.error('TEHCS form error:', error);
-    btn.classList.remove('loading');
-    btnText.textContent = 'Send My Request →';
-    errBanner.innerHTML = '⚠️ Something went wrong. Please try again or contact us directly at ' +
-      '<a href="mailto:twitchempireinfo@gmail.com">twitchempireinfo@gmail.com</a> or ' +
-      '<a href="tel:+233240699329">+233 240 699 329</a>.';
-    errBanner.classList.add('show');
+  // ── Helpers ──
+  function setStep(id, state) {
+    const el = document.getElementById(id);
+    el.classList.remove('wait','active','done');
+    el.classList.add(state);
+    if (state === 'active') el.querySelector('.step-dot').textContent = '•';
+    if (state === 'done')   el.querySelector('.step-dot').textContent = '✓';
   }
-});
 
-function closeSuccess() {
-  document.getElementById('successOverlay').classList.remove('show');
-}
+  function showError(msg) {
+    const el = document.getElementById('formError');
+    el.innerHTML = msg; el.classList.add('show');
+    el.scrollIntoView({ behavior:'smooth', block:'center' });
+  }
 
-// Close overlay on background click
-document.getElementById('successOverlay').addEventListener('click', function(e) {
-  if (e.target === this) closeSuccess();
-});
+  window.closeSuccess = function() {
+    document.getElementById('successOverlay').classList.remove('show');
+  };
+  document.getElementById('successOverlay').addEventListener('click', function(e) {
+    if (e.target === this) closeSuccess();
+  });
+
+  // ── Form Submit ──
+  document.getElementById('contact-form').addEventListener('submit', async function(e) {
+    e.preventDefault();
+
+    const btn      = document.getElementById('submitBtn');
+    const btnText  = document.getElementById('submitText');
+    const errEl    = document.getElementById('formError');
+    const stepsEl  = document.getElementById('sendingSteps');
+
+    // Get values
+    const fname   = document.getElementById('fname').value.trim();
+    const lname   = document.getElementById('lname').value.trim();
+    const email   = document.getElementById('email').value.trim();
+    const phone   = document.getElementById('phone').value.trim();
+    const country = document.getElementById('country').value || 'Not specified';
+    const service = document.getElementById('service').value || 'Not specified';
+    const msg     = document.getElementById('msg').value.trim();
+
+    // Validate
+    if (!fname || !lname || !email || !phone || !msg) {
+      showError('⚠️ Please fill in all required fields marked with *');
+      return;
+    }
+    if (!email.includes('@')) {
+      showError('⚠️ Please enter a valid email address.');
+      return;
+    }
+
+    // UI: loading
+    btn.classList.add('loading');
+    btnText.textContent = 'Sending...';
+    errEl.classList.remove('show');
+    stepsEl.classList.add('show');
+    setStep('step1','active');
+    setStep('step2','wait');
+    setStep('step3','wait');
+
+    const fullName  = fname + ' ' + lname;
+    const timestamp = new Date().toLocaleString('en-GB', { timeZone:'Africa/Accra' });
+
+    const templateParams = {
+      from_name:  fullName,
+      from_email: email,
+      phone,
+      country,
+      service,
+      message:    msg,
+      timestamp,
+      reply_to:   email,
+    };
+
+    try {
+
+      // ── STEP 1: Email to TEHCS ──────────────────────
+      await emailjs.send(EMAILJS.SERVICE_ID, EMAILJS.TEMPLATE_BUSINESS, templateParams);
+      setStep('step1','done');
+      setStep('step2','active');
+
+      // ── STEP 2: Confirmation email to client ────────
+      await emailjs.send(EMAILJS.SERVICE_ID, EMAILJS.TEMPLATE_CLIENT, templateParams);
+      setStep('step2','done');
+      setStep('step3','active');
+
+      // ── STEP 3: Save to Firestore ───────────────────
+      await addDoc(collection(db, 'enquiries'), {
+        from_name:  fullName,
+        from_email: email,
+        phone,
+        country,
+        service,
+        message:    msg,
+        status:     'new',
+        timestamp,
+        createdAt:  serverTimestamp(),
+      });
+      setStep('step3','done');
+
+      // ── SUCCESS ─────────────────────────────────────
+      await new Promise(r => setTimeout(r, 600)); // brief pause to show all ticks
+      btn.classList.remove('loading');
+      btnText.textContent = 'Send My Request →';
+      stepsEl.classList.remove('show');
+      this.reset();
+      setStep('step1','wait');
+      setStep('step2','wait');
+      setStep('step3','wait');
+      document.getElementById('successOverlay').classList.add('show');
+
+    } catch (err) {
+      console.error('TEHCS form error:', err);
+      btn.classList.remove('loading');
+      btnText.textContent = 'Send My Request →';
+      stepsEl.classList.remove('show');
+      showError(
+        '⚠️ Something went wrong. Please try again or contact us directly:<br>' +
+        '<a href="mailto:twitchempireinfo@gmail.com" style="color:var(--navy);">twitchempireinfo@gmail.com</a> &nbsp;|&nbsp; ' +
+        '<a href="tel:+233240699329" style="color:var(--navy);">+233 240 699 329</a>'
+      );
+    }
+  });
 </script>
 
 </body>
