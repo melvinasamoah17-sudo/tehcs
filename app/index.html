@@ -1,0 +1,743 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#101D3F">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="TEHCS">
+  <title>TEHCS App</title>
+  <link rel="manifest" href="manifest.json">
+  <link rel="apple-touch-icon" href="icons/icon-192.png">
+  <link rel="stylesheet" href="css/app.css">
+</head>
+<body>
+
+<!-- ══ AUTH SCREEN ══ -->
+<div class="auth-screen" id="authScreen">
+  <div class="auth-card">
+    <div class="auth-logo">
+      <div class="auth-logo-box">TEHCS</div>
+      <h2>Welcome</h2>
+      <p>Sign in to book services &amp; track your requests</p>
+    </div>
+    <div class="auth-tabs">
+      <button class="auth-tab active" onclick="switchAuth('login')" id="tab-login">Sign In</button>
+      <button class="auth-tab" onclick="switchAuth('register')" id="tab-register">Register</button>
+    </div>
+    <div class="auth-error" id="authError"></div>
+
+    <!-- LOGIN -->
+    <div id="auth-login">
+      <div class="f-group">
+        <label>Email</label>
+        <input type="email" id="login-email" placeholder="you@example.com" autocomplete="email">
+      </div>
+      <div class="f-group">
+        <label>Password</label>
+        <input type="password" id="login-pwd" placeholder="••••••••" autocomplete="current-password">
+      </div>
+      <button class="btn-full btn-navy" onclick="login()" id="loginBtn">Sign In</button>
+      <p style="text-align:center;margin-top:14px;font-size:.78rem;color:var(--tmuted);">
+        <a href="#" onclick="resetPassword()" style="color:var(--navy);text-decoration:none;font-weight:600;">Forgot password?</a>
+      </p>
+    </div>
+
+    <!-- REGISTER -->
+    <div id="auth-register" style="display:none">
+      <div class="f-group">
+        <label>Full Name</label>
+        <input type="text" id="reg-name" placeholder="John Mensah" autocomplete="name">
+      </div>
+      <div class="f-group">
+        <label>Email</label>
+        <input type="email" id="reg-email" placeholder="you@example.com" autocomplete="email">
+      </div>
+      <div class="f-group">
+        <label>Phone / WhatsApp</label>
+        <input type="tel" id="reg-phone" placeholder="+233 or +44...">
+      </div>
+      <div class="f-group">
+        <label>Password</label>
+        <input type="password" id="reg-pwd" placeholder="Min. 8 characters" autocomplete="new-password">
+      </div>
+      <button class="btn-full btn-gold" onclick="register()" id="registerBtn">Create Account</button>
+    </div>
+
+    <p style="text-align:center;margin-top:18px;font-size:.72rem;color:var(--tmuted);">
+      🔒 Secure · Your data is protected
+    </p>
+  </div>
+</div>
+
+<!-- ══ MAIN APP ══ -->
+<div id="app" style="display:none">
+
+  <!-- TOP NAV -->
+  <div class="app-nav">
+    <div class="app-nav-logo">
+      <div class="app-nav-logo-box">TEHCS</div>
+      <div>
+        <div class="app-nav-title">TEHCS</div>
+        <div class="app-nav-sub">Home Care Service</div>
+      </div>
+    </div>
+    <div class="app-nav-right">
+      <button class="app-nav-btn notif-dot" onclick="showToast('No new notifications','')">🔔</button>
+      <button class="app-nav-btn" onclick="showTab('profile')">👤</button>
+    </div>
+  </div>
+
+  <!-- SCROLL AREA -->
+  <div class="app-scroll" id="appScroll">
+
+    <!-- ══ HOME PAGE ══ -->
+    <div class="page active" id="page-home">
+
+      <!-- Hero -->
+      <div class="home-hero">
+        <div class="home-hero-greeting">Good day,</div>
+        <div class="home-hero-name">Welcome to <span>TEHCS</span> 👋</div>
+        <div class="home-search">
+          <span class="home-search-icon">🔍</span>
+          <input type="text" placeholder="Search services..." id="searchInput" oninput="filterServices(this.value)">
+        </div>
+      </div>
+
+      <!-- Stats -->
+      <div class="home-stats">
+        <div class="home-stat"><div class="home-stat-n" id="myBookingsCount">0</div><div class="home-stat-l">My Bookings</div></div>
+        <div class="home-stat"><div class="home-stat-n">3</div><div class="home-stat-l">Categories</div></div>
+        <div class="home-stat"><div class="home-stat-n">24/7</div><div class="home-stat-l">Support</div></div>
+      </div>
+
+      <!-- Services scroll -->
+      <div class="section">
+        <div class="section-title">
+          Our Services
+          <a href="#" onclick="showTab('book')">See all →</a>
+        </div>
+        <div class="services-scroll" id="servicesScroll">
+          <!-- health -->
+          <div class="svc-chip" onclick="openBookModal('Home Health Care','🩺')">
+            <span class="svc-chip-icon">🩺</span>
+            <div class="svc-chip-name">Home Health Care</div>
+            <div class="svc-chip-cat">Healthcare</div>
+          </div>
+          <div class="svc-chip" onclick="openBookModal('Senior Care','👴')">
+            <span class="svc-chip-icon">👴</span>
+            <div class="svc-chip-name">Senior Care</div>
+            <div class="svc-chip-cat">Healthcare</div>
+          </div>
+          <div class="svc-chip" onclick="openBookModal('Personal Care','🫶')">
+            <span class="svc-chip-icon">🫶</span>
+            <div class="svc-chip-name">Personal Care</div>
+            <div class="svc-chip-cat">Healthcare</div>
+          </div>
+          <div class="svc-chip" onclick="openBookModal('Medication Reminders','💊')">
+            <span class="svc-chip-icon">💊</span>
+            <div class="svc-chip-name">Medication</div>
+            <div class="svc-chip-cat">Healthcare</div>
+          </div>
+          <!-- construction -->
+          <div class="svc-chip" onclick="openBookModal('Plumbing','🔧')">
+            <span class="svc-chip-icon">🔧</span>
+            <div class="svc-chip-name">Plumbing</div>
+            <div class="svc-chip-cat">Construction</div>
+          </div>
+          <div class="svc-chip" onclick="openBookModal('Electrical Work','⚡')">
+            <span class="svc-chip-icon">⚡</span>
+            <div class="svc-chip-name">Electrical</div>
+            <div class="svc-chip-cat">Construction</div>
+          </div>
+          <div class="svc-chip" onclick="openBookModal('Painting','🖌️')">
+            <span class="svc-chip-icon">🖌️</span>
+            <div class="svc-chip-name">Painting</div>
+            <div class="svc-chip-cat">Construction</div>
+          </div>
+          <!-- non-medical -->
+          <div class="svc-chip" onclick="openBookModal('Housekeeping','🏠')">
+            <span class="svc-chip-icon">🏠</span>
+            <div class="svc-chip-name">Housekeeping</div>
+            <div class="svc-chip-cat">Non-Medical</div>
+          </div>
+          <div class="svc-chip" onclick="openBookModal('Cook / Chef','👨‍🍳')">
+            <span class="svc-chip-icon">👨‍🍳</span>
+            <div class="svc-chip-name">Cook / Chef</div>
+            <div class="svc-chip-cat">Non-Medical</div>
+          </div>
+          <div class="svc-chip" onclick="openBookModal('Nanny / Childcare','👶')">
+            <span class="svc-chip-icon">👶</span>
+            <div class="svc-chip-name">Nanny</div>
+            <div class="svc-chip-cat">Non-Medical</div>
+          </div>
+          <div class="svc-chip" onclick="openBookModal('Driver','🚗')">
+            <span class="svc-chip-icon">🚗</span>
+            <div class="svc-chip-name">Driver</div>
+            <div class="svc-chip-cat">Non-Medical</div>
+          </div>
+          <div class="svc-chip" onclick="openBookModal('Laundry','🧺')">
+            <span class="svc-chip-icon">🧺</span>
+            <div class="svc-chip-name">Laundry</div>
+            <div class="svc-chip-cat">Non-Medical</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Recent bookings -->
+      <div class="section" style="padding-top:0">
+        <div class="section-title">
+          Recent Bookings
+          <a href="#" onclick="showTab('bookings')">View all →</a>
+        </div>
+        <div id="recentBookings">
+          <div style="text-align:center;padding:24px;color:var(--tmuted);font-size:.85rem;font-weight:300;">
+            No bookings yet.<br>Tap a service above to get started!
+          </div>
+        </div>
+      </div>
+
+      <!-- Contact strip -->
+      <div style="margin:0 18px 24px;background:var(--navy-dk);border-radius:var(--r-md);padding:18px;display:flex;align-items:center;justify-content:space-between;gap:10px;">
+        <div>
+          <div style="font-family:'Barlow Condensed',sans-serif;font-size:.95rem;font-weight:800;color:#fff;text-transform:uppercase;letter-spacing:.04em;">Need help?</div>
+          <div style="font-size:.75rem;color:rgba(255,255,255,.45);font-weight:300;margin-top:2px;">Our team is always available</div>
+        </div>
+        <div style="display:flex;gap:8px;">
+          <a href="tel:+233240699329" style="width:36px;height:36px;border-radius:50%;background:var(--gold);color:var(--navy-dk);display:flex;align-items:center;justify-content:center;text-decoration:none;font-size:.95rem;">📞</a>
+          <a href="https://wa.me/233240699329" target="_blank" style="width:36px;height:36px;border-radius:50%;background:#25D366;color:#fff;display:flex;align-items:center;justify-content:center;text-decoration:none;font-size:.95rem;">💬</a>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ══ BOOKINGS PAGE ══ -->
+    <div class="page" id="page-bookings">
+      <div class="section">
+        <div style="display:flex;gap:8px;margin-bottom:16px;overflow-x:auto;padding-bottom:4px;">
+          <button class="btn-full btn-navy" style="width:auto;padding:8px 16px;font-size:.74rem;flex-shrink:0;" onclick="filterBookings('all')" id="filter-all">All</button>
+          <button class="btn-full btn-ghost" style="width:auto;padding:8px 16px;font-size:.74rem;flex-shrink:0;" onclick="filterBookings('pending')" id="filter-pending">Pending</button>
+          <button class="btn-full btn-ghost" style="width:auto;padding:8px 16px;font-size:.74rem;flex-shrink:0;" onclick="filterBookings('active')" id="filter-active">Active</button>
+          <button class="btn-full btn-ghost" style="width:auto;padding:8px 16px;font-size:.74rem;flex-shrink:0;" onclick="filterBookings('complete')" id="filter-complete">Completed</button>
+        </div>
+        <div id="allBookings">
+          <div style="text-align:center;padding:40px;color:var(--tmuted);font-size:.88rem;font-weight:300;">
+            <div style="font-size:2.5rem;margin-bottom:12px;">📋</div>
+            No bookings yet.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ CHAT PAGE ══ -->
+    <div class="page" id="page-chat">
+      <div class="chat-wrap" style="height:calc(100vh - var(--nav-h) - var(--tab-h) - 64px);">
+        <div style="background:var(--navy-dk);padding:12px 18px;display:flex;align-items:center;gap:10px;">
+          <div style="width:36px;height:36px;border-radius:50%;background:var(--gold);color:var(--navy-dk);font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:.85rem;display:flex;align-items:center;justify-content:center;flex-shrink:0;">T</div>
+          <div>
+            <div style="font-family:'Barlow Condensed',sans-serif;font-size:.9rem;font-weight:800;color:#fff;text-transform:uppercase;letter-spacing:.04em;">TEHCS Support</div>
+            <div style="font-size:.65rem;color:rgba(255,255,255,.45);display:flex;align-items:center;gap:4px;"><span style="width:6px;height:6px;border-radius:50%;background:#4ade80;display:inline-block;"></span> Usually replies within 1 hour</div>
+          </div>
+        </div>
+        <div class="chat-messages" id="chatMessages">
+          <div>
+            <div class="chat-agent">
+              <div class="agent-avatar">T</div>
+              <div class="agent-name">TEHCS Team</div>
+            </div>
+            <div class="chat-bubble them">
+              👋 Hello! Welcome to TEHCS. How can we help you today? You can ask us about our services, pricing, or book directly through the app!
+            </div>
+            <div class="chat-time chat-them-time">Today</div>
+          </div>
+
+          <div style="text-align:center;margin:10px 0;">
+            <div style="display:inline-flex;gap:8px;flex-wrap:wrap;justify-content:center;">
+              <button onclick="sendQuickMsg(this)" class="btn-full btn-ghost" style="width:auto;padding:7px 14px;font-size:.74rem;">Book a service</button>
+              <button onclick="sendQuickMsg(this)" class="btn-full btn-ghost" style="width:auto;padding:7px 14px;font-size:.74rem;">Pricing info</button>
+              <button onclick="sendQuickMsg(this)" class="btn-full btn-ghost" style="width:auto;padding:7px 14px;font-size:.74rem;">Track my booking</button>
+            </div>
+          </div>
+        </div>
+        <div class="chat-input-bar">
+          <textarea class="chat-input" id="chatInput" placeholder="Type a message..." rows="1" onkeydown="handleChatKey(event)"></textarea>
+          <button class="chat-send" onclick="sendMessage()">➤</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ PROFILE PAGE ══ -->
+    <div class="page" id="page-profile">
+      <div class="profile-hero">
+        <div class="profile-avatar" id="profileAvatar">U</div>
+        <div class="profile-name" id="profileName">User</div>
+        <div class="profile-email" id="profileEmail"></div>
+      </div>
+      <div class="profile-menu">
+        <div class="menu-item" onclick="showTab('bookings')">
+          <span class="menu-icon">📋</span>
+          <span class="menu-label">My Bookings</span>
+          <span class="menu-arrow">›</span>
+        </div>
+        <div class="menu-item" onclick="showTab('chat')">
+          <span class="menu-icon">💬</span>
+          <span class="menu-label">Chat with TEHCS</span>
+          <span class="menu-arrow">›</span>
+        </div>
+        <a href="tel:+233240699329" class="menu-item">
+          <span class="menu-icon">📞</span>
+          <span class="menu-label">Call Ghana Office</span>
+          <span class="menu-arrow">›</span>
+        </a>
+        <a href="tel:+447448468070" class="menu-item">
+          <span class="menu-icon">📞</span>
+          <span class="menu-label">Call UK Office</span>
+          <span class="menu-arrow">›</span>
+        </a>
+        <a href="https://tehcs.com" target="_blank" class="menu-item">
+          <span class="menu-icon">🌐</span>
+          <span class="menu-label">Visit tehcs.com</span>
+          <span class="menu-arrow">›</span>
+        </a>
+        <div class="menu-item" onclick="shareApp()">
+          <span class="menu-icon">📤</span>
+          <span class="menu-label">Share App</span>
+          <span class="menu-arrow">›</span>
+        </div>
+        <div class="menu-item danger" onclick="signOut()">
+          <span class="menu-icon">🚪</span>
+          <span class="menu-label">Sign Out</span>
+          <span class="menu-arrow">›</span>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /app-scroll -->
+
+  <!-- TAB BAR -->
+  <div class="tab-bar">
+    <button class="tab-item active" id="tab-home" onclick="showTab('home')">
+      <span class="tab-icon">🏠</span>
+      <span class="tab-label">Home</span>
+    </button>
+    <button class="tab-item" id="tab-book" onclick="showTab('book')">
+      <span class="tab-icon">➕</span>
+      <span class="tab-label">Book</span>
+    </button>
+    <button class="tab-item" id="tab-bookings" onclick="showTab('bookings')">
+      <span class="tab-icon">📋</span>
+      <span class="tab-label">Bookings</span>
+      <span class="tab-badge" id="bookingsBadge" style="display:none">0</span>
+    </button>
+    <button class="tab-item" id="tab-chat" onclick="showTab('chat')">
+      <span class="tab-icon">💬</span>
+      <span class="tab-label">Chat</span>
+    </button>
+    <button class="tab-item" id="tab-profile" onclick="showTab('profile')">
+      <span class="tab-icon">👤</span>
+      <span class="tab-label">Profile</span>
+    </button>
+  </div>
+
+</div><!-- /app -->
+
+<!-- ══ BOOK SERVICE MODAL ══ -->
+<div class="modal-overlay" id="bookModal" onclick="if(event.target===this)closeBookModal()">
+  <div class="modal-sheet">
+    <div class="modal-handle"></div>
+    <h3 id="bookModalTitle">Book a Service</h3>
+
+    <div id="bookFormWrap">
+      <div class="f-group">
+        <label>Service</label>
+        <input type="text" id="book-service" readonly style="background:var(--light);color:var(--tmid);">
+      </div>
+      <div class="date-row">
+        <div class="f-group">
+          <label>Preferred Date *</label>
+          <input type="date" id="book-date">
+        </div>
+        <div class="f-group">
+          <label>Preferred Time *</label>
+          <input type="time" id="book-time">
+        </div>
+      </div>
+      <div class="f-group">
+        <label>Address / Location *</label>
+        <input type="text" id="book-address" placeholder="Your home address">
+      </div>
+      <div class="f-group">
+        <label>Additional Notes</label>
+        <textarea id="book-notes" placeholder="Any specific details about your situation..."></textarea>
+      </div>
+      <div style="background:rgba(245,166,35,.1);border:1px solid rgba(245,166,35,.25);border-radius:10px;padding:12px 14px;margin-bottom:16px;font-size:.8rem;color:var(--tmid);line-height:1.6;">
+        📞 After submitting, TEHCS will contact you within <strong>24 hours</strong> to confirm your booking.
+      </div>
+      <button class="btn-full btn-navy" onclick="submitBooking()" id="bookSubmitBtn">Confirm Booking</button>
+    </div>
+
+    <div class="success-screen" id="bookSuccess">
+      <div class="success-circle">✅</div>
+      <h3>Booking Submitted!</h3>
+      <p>Your request has been sent to TEHCS. We'll contact you within 24 hours to confirm your booking.</p>
+      <button class="btn-full btn-gold" onclick="closeBookModal()">Done</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<!-- INSTALL BANNER -->
+<div class="install-banner" id="installBanner">
+  <span style="font-size:1.4rem;">📱</span>
+  <div class="install-banner-text">
+    <strong>Install TEHCS App</strong>
+    <span>Add to home screen for quick access</span>
+  </div>
+  <button class="install-banner-btn" onclick="installApp()">Install</button>
+  <button class="install-close" onclick="document.getElementById('installBanner').classList.remove('show')">✕</button>
+</div>
+
+<!-- Firebase -->
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-app.js";
+import {
+  getAuth, onAuthStateChanged, signInWithEmailAndPassword,
+  createUserWithEmailAndPassword, signOut as fbSignOut,
+  updateProfile, sendPasswordResetEmail
+} from "https://www.gstatic.com/firebasejs/12.13.0/firebase-auth.js";
+import {
+  getFirestore, collection, addDoc, getDocs, query,
+  where, orderBy, onSnapshot, doc, serverTimestamp
+} from "https://www.gstatic.com/firebasejs/12.13.0/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey:            "AIzaSyBg_fCZkhkzNr41f6xespzlRucs6wVk9ck",
+  authDomain:        "tehcs-675c6.firebaseapp.com",
+  projectId:         "tehcs-675c6",
+  storageBucket:     "tehcs-675c6.firebasestorage.app",
+  messagingSenderId: "428200196151",
+  appId:             "1:428200196151:web:2dee682eda618b2ac7e7b2"
+};
+
+const app  = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db   = getFirestore(app);
+
+let currentUser  = null;
+let allBookings  = [];
+let chatListener = null;
+
+/* ── AUTH STATE ── */
+onAuthStateChanged(auth, user => {
+  if (user) {
+    currentUser = user;
+    document.getElementById('authScreen').style.display = 'none';
+    document.getElementById('app').style.display = 'flex';
+    // Set profile
+    const name = user.displayName || user.email.split('@')[0];
+    document.getElementById('profileName').textContent    = name;
+    document.getElementById('profileEmail').textContent   = user.email;
+    document.getElementById('profileAvatar').textContent  = name[0].toUpperCase();
+    // Load data
+    loadBookings();
+    listenChat();
+  } else {
+    currentUser = null;
+    document.getElementById('authScreen').style.display = 'flex';
+    document.getElementById('app').style.display = 'none';
+  }
+});
+
+/* ── AUTH ACTIONS ── */
+window.login = async function() {
+  const email = document.getElementById('login-email').value.trim();
+  const pwd   = document.getElementById('login-pwd').value;
+  const btn   = document.getElementById('loginBtn');
+  const err   = document.getElementById('authError');
+  if (!email || !pwd) { showAuthErr('Please enter your email and password.'); return; }
+  btn.textContent = 'Signing in...'; btn.disabled = true;
+  err.classList.remove('show');
+  try {
+    await signInWithEmailAndPassword(auth, email, pwd);
+  } catch(e) {
+    const msgs = { 'auth/invalid-credential':'Incorrect email or password.', 'auth/too-many-requests':'Too many attempts. Please wait.' };
+    showAuthErr(msgs[e.code] || 'Login failed. Please try again.');
+    btn.textContent = 'Sign In'; btn.disabled = false;
+  }
+};
+
+window.register = async function() {
+  const name  = document.getElementById('reg-name').value.trim();
+  const email = document.getElementById('reg-email').value.trim();
+  const phone = document.getElementById('reg-phone').value.trim();
+  const pwd   = document.getElementById('reg-pwd').value;
+  const btn   = document.getElementById('registerBtn');
+  if (!name||!email||!pwd) { showAuthErr('Please fill in all fields.'); return; }
+  if (pwd.length < 8)      { showAuthErr('Password must be at least 8 characters.'); return; }
+  btn.textContent = 'Creating...'; btn.disabled = true;
+  try {
+    const cred = await createUserWithEmailAndPassword(auth, email, pwd);
+    await updateProfile(cred.user, { displayName: name });
+    // Save to Firestore
+    await addDoc(collection(db,'clients'), { uid:cred.user.uid, name, email, phone, createdAt:serverTimestamp() });
+  } catch(e) {
+    const msgs = { 'auth/email-already-in-use':'This email is already registered.', 'auth/weak-password':'Password is too weak.' };
+    showAuthErr(msgs[e.code] || 'Registration failed.');
+    btn.textContent = 'Create Account'; btn.disabled = false;
+  }
+};
+
+window.signOut = async function() {
+  if (!confirm('Sign out of TEHCS?')) return;
+  await fbSignOut(auth);
+};
+
+window.resetPassword = async function() {
+  const email = document.getElementById('login-email').value.trim();
+  if (!email) { showAuthErr('Enter your email first.'); return; }
+  await sendPasswordResetEmail(auth, email);
+  showAuthErr('✅ Reset link sent to ' + email);
+  document.getElementById('authError').style.background = '#f0fdf4';
+  document.getElementById('authError').style.color = '#15803d';
+  document.getElementById('authError').style.borderColor = '#86efac';
+};
+
+function showAuthErr(msg) {
+  const el = document.getElementById('authError');
+  el.textContent = msg; el.classList.add('show');
+}
+
+window.switchAuth = function(tab) {
+  document.getElementById('auth-login').style.display    = tab==='login'    ? 'block' : 'none';
+  document.getElementById('auth-register').style.display = tab==='register' ? 'block' : 'none';
+  document.getElementById('tab-login').classList.toggle('active',    tab==='login');
+  document.getElementById('tab-register').classList.toggle('active', tab==='register');
+  document.getElementById('authError').classList.remove('show');
+};
+
+/* ── BOOKINGS ── */
+async function loadBookings() {
+  if (!currentUser) return;
+  try {
+    const q = query(collection(db,'bookings'), where('uid','==',currentUser.uid), orderBy('createdAt','desc'));
+    onSnapshot(q, snap => {
+      allBookings = snap.docs.map(d => ({id:d.id,...d.data()}));
+      document.getElementById('myBookingsCount').textContent = allBookings.length;
+      renderBookings(allBookings, 'recentBookings', 3);
+      renderBookings(allBookings, 'allBookings');
+      const pending = allBookings.filter(b=>b.status==='pending'||b.status==='new').length;
+      const badge   = document.getElementById('bookingsBadge');
+      badge.textContent = pending;
+      badge.style.display = pending ? 'flex' : 'none';
+    });
+  } catch(e) { console.error(e); }
+}
+
+function renderBookings(bookings, containerId, limit) {
+  const el = document.getElementById(containerId);
+  const items = limit ? bookings.slice(0,limit) : bookings;
+  if (!items.length) {
+    el.innerHTML = '<div style="text-align:center;padding:30px;color:var(--tmuted);font-size:.85rem;font-weight:300;"><div style="font-size:2.2rem;margin-bottom:10px;">📋</div>No bookings yet.</div>';
+    return;
+  }
+  el.innerHTML = items.map(b => `
+    <div class="booking-card" onclick="showBookingDetail('${b.id}')">
+      <div class="booking-card-top">
+        <div class="booking-card-service">${b.serviceIcon||'🔧'} ${b.service}</div>
+        <span class="booking-status bs-${b.status||'pending'}">${b.status||'pending'}</span>
+      </div>
+      <div class="booking-card-meta">
+        <span>📅 ${b.date||'TBD'}</span>
+        <span>⏰ ${b.time||'TBD'}</span>
+        <span>📍 ${(b.address||'').slice(0,20)}...</span>
+      </div>
+      ${b.status==='active'?`<div class="booking-progress"><div class="progress-bar"><div class="progress-fill" style="width:60%"></div></div></div>`:''}
+    </div>
+  `).join('');
+}
+
+window.filterBookings = function(status) {
+  document.querySelectorAll('[id^="filter-"]').forEach(b => { b.className='btn-full btn-ghost'; b.style.cssText='width:auto;padding:8px 16px;font-size:.74rem;flex-shrink:0;'; });
+  document.getElementById('filter-'+status).className='btn-full btn-navy';
+  document.getElementById('filter-'+status).style.cssText='width:auto;padding:8px 16px;font-size:.74rem;flex-shrink:0;';
+  const filtered = status==='all' ? allBookings : allBookings.filter(b=>(b.status||'pending')===status);
+  renderBookings(filtered, 'allBookings');
+};
+
+window.showBookingDetail = function(id) {
+  const b = allBookings.find(x=>x.id===id);
+  if (!b) return;
+  showToast(`${b.service} — ${b.status||'pending'}`,'');
+};
+
+/* ── BOOK MODAL ── */
+window.openBookModal = function(service, icon) {
+  document.getElementById('book-service').value  = service;
+  document.getElementById('bookModalTitle').textContent = icon + ' Book: ' + service;
+  document.getElementById('bookFormWrap').style.display = 'block';
+  document.getElementById('bookSuccess').classList.remove('show');
+  // Set min date to today
+  document.getElementById('book-date').min = new Date().toISOString().split('T')[0];
+  document.getElementById('bookModal').classList.add('open');
+};
+window.closeBookModal = function() {
+  document.getElementById('bookModal').classList.remove('open');
+};
+
+window.submitBooking = async function() {
+  const date    = document.getElementById('book-date').value;
+  const time    = document.getElementById('book-time').value;
+  const address = document.getElementById('book-address').value.trim();
+  const service = document.getElementById('book-service').value;
+  const notes   = document.getElementById('book-notes').value.trim();
+  const btn     = document.getElementById('bookSubmitBtn');
+
+  if (!date||!address) { showToast('Please fill in date and address','error'); return; }
+  btn.textContent = 'Submitting...'; btn.disabled = true;
+
+  try {
+    await addDoc(collection(db,'bookings'), {
+      uid:         currentUser.uid,
+      clientName:  currentUser.displayName || currentUser.email,
+      clientEmail: currentUser.email,
+      service,
+      serviceIcon: document.getElementById('bookModalTitle').textContent.split(' ')[0],
+      date, time, address, notes,
+      status:     'pending',
+      createdAt:  serverTimestamp()
+    });
+    document.getElementById('bookFormWrap').style.display = 'none';
+    document.getElementById('bookSuccess').classList.add('show');
+    btn.textContent = 'Confirm Booking'; btn.disabled = false;
+    // Clear
+    ['book-date','book-time','book-address','book-notes'].forEach(id => document.getElementById(id).value='');
+  } catch(e) {
+    showToast('Error submitting. Please try again.','error');
+    btn.textContent = 'Confirm Booking'; btn.disabled = false;
+  }
+};
+
+/* ── CHAT ── */
+function listenChat() {
+  if (!currentUser) return;
+  const q = query(collection(db,'chats'), where('uid','==',currentUser.uid), orderBy('createdAt','asc'));
+  chatListener = onSnapshot(q, snap => {
+    const msgs   = document.getElementById('chatMessages');
+    const extras = msgs.querySelectorAll('.user-msg, .auto-reply');
+    extras.forEach(e => e.remove());
+    snap.docs.forEach(d => {
+      const data = d.data();
+      if (!data.text) return;
+      const div  = document.createElement('div');
+      div.className = data.from==='client' ? 'user-msg' : 'auto-reply';
+      div.innerHTML = data.from==='client'
+        ? `<div class="chat-bubble me">${data.text}</div><div class="chat-time">${fmtTime(data.createdAt)}</div>`
+        : `<div class="chat-agent"><div class="agent-avatar">T</div><div class="agent-name">TEHCS Team</div></div><div class="chat-bubble them">${data.text}</div><div class="chat-time chat-them-time">${fmtTime(data.createdAt)}</div>`;
+      div.style.marginBottom = '2px';
+      msgs.appendChild(div);
+    });
+    msgs.scrollTop = msgs.scrollHeight;
+  });
+}
+
+window.sendMessage = async function() {
+  const input = document.getElementById('chatInput');
+  const text  = input.value.trim();
+  if (!text || !currentUser) return;
+  input.value = '';
+  input.style.height = 'auto';
+  try {
+    await addDoc(collection(db,'chats'), {
+      uid:   currentUser.uid,
+      name:  currentUser.displayName || currentUser.email,
+      email: currentUser.email,
+      text, from:'client',
+      createdAt: serverTimestamp()
+    });
+    // Auto-reply after 1s
+    setTimeout(async () => {
+      await addDoc(collection(db,'chats'), {
+        uid:'tehcs-team', from:'agent', name:'TEHCS Team',
+        text: '✅ Thanks for your message! A member of our team will get back to you shortly. In the meantime, you can also call us on +233 240 699 329.',
+        createdAt: serverTimestamp()
+      });
+    }, 1200);
+  } catch(e) { console.error(e); }
+};
+
+window.sendQuickMsg = function(btn) {
+  document.getElementById('chatInput').value = btn.textContent;
+  sendMessage();
+};
+
+window.handleChatKey = function(e) {
+  if (e.key==='Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); }
+};
+
+/* ── TABS ── */
+window.showTab = function(name) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab-item').forEach(t => t.classList.remove('active'));
+  const pg = document.getElementById('page-'+(name==='book'?'home':name));
+  if (pg) pg.classList.add('active');
+  const tb = document.getElementById('tab-'+name);
+  if (tb) tb.classList.add('active');
+  if (name==='book') openBookModal('Select a Service','🔧');
+  document.getElementById('appScroll').scrollTop = 0;
+};
+
+window.filterServices = function(val) {
+  document.querySelectorAll('.svc-chip').forEach(c => {
+    c.style.display = c.textContent.toLowerCase().includes(val.toLowerCase()) ? '' : 'none';
+  });
+};
+
+/* ── SHARE ── */
+window.shareApp = function() {
+  if (navigator.share) {
+    navigator.share({ title:'TEHCS App', text:'Book home care and construction services with TEHCS!', url:'https://tehcs.com/app' });
+  } else {
+    navigator.clipboard.writeText('https://tehcs.com/app');
+    showToast('Link copied!','success');
+  }
+};
+
+/* ── HELPERS ── */
+function fmtTime(ts) {
+  if (!ts) return '';
+  const d = ts.toDate ? ts.toDate() : new Date(ts);
+  return d.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'});
+}
+
+window.showToast = function(msg, type='') {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.className = 'toast show ' + type;
+  setTimeout(() => t.classList.remove('show'), 3000);
+};
+
+/* ── PWA INSTALL ── */
+let deferredPrompt;
+window.addEventListener('beforeinstallprompt', e => {
+  e.preventDefault(); deferredPrompt = e;
+  setTimeout(() => document.getElementById('installBanner').classList.add('show'), 3000);
+});
+window.installApp = function() {
+  if (!deferredPrompt) return;
+  deferredPrompt.prompt();
+  deferredPrompt.userChoice.then(() => {
+    deferredPrompt = null;
+    document.getElementById('installBanner').classList.remove('show');
+  });
+};
+
+/* ── SERVICE WORKER ── */
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('../sw.js').catch(console.error);
+}
+</script>
+
+</body>
+</html>
