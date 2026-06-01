@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#101D3F">
+  <title>Book a Service — TEHCS</title>
+  <link rel="manifest" href="manifest.json">
+  <link rel="stylesheet" href="css/app.css">
+  <style>
+    .page-header { background:var(--navy-dk); padding:16px 20px 20px; display:flex; align-items:center; gap:12px; }
+    .back-btn { width:36px; height:36px; border-radius:9px; background:rgba(255,255,255,.1); border:none; cursor:pointer; display:flex; align-items:center; justify-content:center; font-size:1rem; color:#fff; flex-shrink:0; }
+    .page-header h2 { font-family:'Barlow Condensed',sans-serif; font-size:1.3rem; font-weight:900; color:#fff; text-transform:uppercase; letter-spacing:.04em; }
+
+    .form-section { padding:20px; }
+
+    .selected-svc-card {
+      background:linear-gradient(135deg,var(--navy) 0%,var(--navy-lt) 100%);
+      border-radius:14px; padding:16px 18px;
+      display:flex; align-items:center; gap:12px; margin-bottom:20px;
+    }
+    .selected-svc-icon { font-size:2rem; }
+    .selected-svc-name { font-family:'Barlow Condensed',sans-serif; font-size:1.05rem; font-weight:800; color:#fff; text-transform:uppercase; letter-spacing:.03em; }
+    .selected-svc-change { font-size:.72rem; color:var(--gold); font-weight:600; cursor:pointer; margin-top:3px; display:block; }
+
+    /* Step progress */
+    .steps-bar { display:flex; align-items:center; gap:0; margin-bottom:24px; }
+    .step-dot  { width:28px; height:28px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-family:'Barlow Condensed',sans-serif; font-size:.8rem; font-weight:900; flex-shrink:0; }
+    .step-dot.done    { background:var(--green); color:#fff; }
+    .step-dot.active  { background:var(--navy); color:#fff; }
+    .step-dot.waiting { background:var(--light); color:var(--tmuted); }
+    .step-line { flex:1; height:2px; background:var(--border); }
+    .step-line.done { background:var(--green); }
+    .step-lbl { font-family:'Barlow Condensed',sans-serif; font-size:.58rem; font-weight:700; letter-spacing:.08em; text-transform:uppercase; color:var(--tmuted); text-align:center; margin-top:4px; }
+
+    .form-step { display:none; }
+    .form-step.active { display:block; animation:fadeUp .3s ease; }
+
+    /* date/time picker */
+    .date-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:8px; margin-bottom:16px; }
+    .date-chip {
+      background:var(--off); border-radius:10px; padding:10px 6px;
+      text-align:center; border:2px solid var(--border); cursor:pointer; transition:all .2s;
+    }
+    .date-chip:active { transform:scale(.95); }
+    .date-chip.selected { border-color:var(--navy); background:rgba(27,43,94,.06); }
+    .dc-day  { font-family:'Barlow Condensed',sans-serif; font-size:.65rem; font-weight:700; letter-spacing:.06em; text-transform:uppercase; color:var(--tmuted); }
+    .dc-num  { font-family:'Barlow Condensed',sans-serif; font-size:1.2rem; font-weight:900; color:var(--navy); }
+    .dc-mon  { font-size:.6rem; color:var(--tmuted); }
+
+    .time-grid { display:grid; grid-template-columns:1fr 1fr; gap:8px; }
+    .time-chip {
+      background:var(--off); border-radius:10px; padding:12px;
+      text-align:center; border:2px solid var(--border); cursor:pointer;
+      font-family:'Barlow Condensed',sans-serif; font-size:.88rem; font-weight:700;
+      color:var(--tmid); text-transform:uppercase; letter-spacing:.05em; transition:all .2s;
+    }
+    .time-chip:active { transform:scale(.95); }
+    .time-chip.selected { border-color:var(--navy); background:rgba(27,43,94,.06); color:var(--navy); }
+
+    /* Confirm screen */
+    .confirm-card { background:var(--off); border-radius:14px; padding:20px; border:1px solid var(--border); margin-bottom:16px; }
+    .confirm-row { display:flex; justify-content:space-between; align-items:center; padding:10px 0; border-bottom:1px solid var(--border); }
+    .confirm-row:last-child { border-bottom:none; }
+    .cr-label { font-family:'Barlow Condensed',sans-serif; font-size:.72rem; font-weight:700; letter-spacing:.1em; text-transform:uppercase; color:var(--tmuted); }
+    .cr-val   { font-size:.9rem; font-weight:600; color:var(--navy-dk); text-align:right; max-width:60%; }
+  </style>
+</head>
+<body>
+<div class="app-shell">
+  <div class="status-bar"></div>
+
+  <div class="page-header">
+    <button class="back-btn" onclick="history.back()">←</button>
+    <h2>Book a Service</h2>
+  </div>
+
+  <div class="scroll-content">
+    <div class="form-section">
+
+      <!-- Selected service -->
+      <div class="selected-svc-card" id="selectedSvcCard">
+        <span class="selected-svc-icon" id="selectedIcon">🔧</span>
+        <div>
+          <div class="selected-svc-name" id="selectedName">Select a Service</div>
+          <span class="selected-svc-change" onclick="showServicePicker()">Change service →</span>
+        </div>
+      </div>
+
+      <!-- Step progress bar -->
+      <div class="steps-bar">
+        <div>
+          <div class="step-dot active" id="sd1">1</div>
+          <div class="step-lbl">Details</div>
+        </div>
+        <div class="step-line" id="sl1"></div>
+        <div>
+          <div class="step-dot waiting" id="sd2">2</div>
+          <div class="step-lbl">Schedule</div>
+        </div>
+        <div class="step-line" id="sl2"></div>
+        <div>
+          <div class="step-dot waiting" id="sd3">3</div>
+          <div class="step-lbl">Confirm</div>
+        </div>
+      </div>
+
+      <!-- STEP 1: Your Details -->
+      <div class="form-step active" id="step1">
+        <div class="f-group">
+          <label>Full Name *</label>
+          <input type="text" id="b-name" placeholder="John Mensah">
+        </div>
+        <div class="f-group">
+          <label>Phone / WhatsApp *</label>
+          <input type="tel" id="b-phone" placeholder="+233 or +44...">
+        </div>
+        <div class="f-group">
+          <label>Email Address *</label>
+          <input type="email" id="b-email" placeholder="you@example.com">
+        </div>
+        <div class="f-group">
+          <label>Location / Address *</label>
+          <input type="text" id="b-address" placeholder="Street, City, Country">
+        </div>
+        <div class="f-group">
+          <label>Additional Notes</label>
+          <textarea id="b-notes" placeholder="Tell us more about what you need..."></textarea>
+        </div>
+        <button class="btn btn-navy btn-full" onclick="goStep(2)">Next: Choose Date →</button>
+      </div>
+
+      <!-- STEP 2: Schedule -->
+      <div class="form-step" id="step2">
+        <div class="section-label" style="margin-bottom:12px;">Choose Date</div>
+        <div class="date-grid" id="dateGrid"></div>
+        <div class="section-label" style="margin:16px 0 12px;">Preferred Time</div>
+        <div class="time-grid">
+          <div class="time-chip" onclick="selectTime(this,'Morning 8–10am')">🌅 Morning<br><small>8:00 – 10:00</small></div>
+          <div class="time-chip" onclick="selectTime(this,'Late Morning 10–12pm')">☀️ Late Morning<br><small>10:00 – 12:00</small></div>
+          <div class="time-chip" onclick="selectTime(this,'Afternoon 12–3pm')">🌤️ Afternoon<br><small>12:00 – 15:00</small></div>
+          <div class="time-chip" onclick="selectTime(this,'Late Afternoon 3–6pm')">🌆 Late Afternoon<br><small>15:00 – 18:00</small></div>
+        </div>
+        <div style="display:flex;gap:10px;margin-top:20px;">
+          <button class="btn btn-ghost" style="flex:1" onclick="goStep(1)">← Back</button>
+          <button class="btn btn-navy" style="flex:2" onclick="goStep(3)">Next: Confirm →</button>
+        </div>
+      </div>
+
+      <!-- STEP 3: Confirm -->
+      <div class="form-step" id="step3">
+        <div class="confirm-card">
+          <div class="confirm-row">
+            <span class="cr-label">Service</span>
+            <span class="cr-val" id="conf-service">—</span>
+          </div>
+          <div class="confirm-row">
+            <span class="cr-label">Name</span>
+            <span class="cr-val" id="conf-name">—</span>
+          </div>
+          <div class="confirm-row">
+            <span class="cr-label">Phone</span>
+            <span class="cr-val" id="conf-phone">—</span>
+          </div>
+          <div class="confirm-row">
+            <span class="cr-label">Email</span>
+            <span class="cr-val" id="conf-email">—</span>
+          </div>
+          <div class="confirm-row">
+            <span class="cr-label">Address</span>
+            <span class="cr-val" id="conf-address">—</span>
+          </div>
+          <div class="confirm-row">
+            <span class="cr-label">Date</span>
+            <span class="cr-val" id="conf-date">—</span>
+          </div>
+          <div class="confirm-row">
+            <span class="cr-label">Time</span>
+            <span class="cr-val" id="conf-time">—</span>
+          </div>
+          <div class="confirm-row">
+            <span class="cr-label">Notes</span>
+            <span class="cr-val" id="conf-notes">—</span>
+          </div>
+        </div>
+        <p style="font-size:.78rem;color:var(--tmuted);text-align:center;margin-bottom:16px;line-height:1.6;">
+          Our team will confirm your booking via WhatsApp or email within 24 hours.
+        </p>
+        <div style="display:flex;gap:10px;">
+          <button class="btn btn-ghost" style="flex:1" onclick="goStep(2)">← Back</button>
+          <button class="btn btn-gold" style="flex:2" id="submitBookingBtn" onclick="submitBooking()">
+            Confirm Booking ✓
+          </button>
+        </div>
+      </div>
+
+    </div>
+    <div style="height:20px;"></div>
+  </div>
+
+  <nav class="bottom-nav">
+    <button class="nav-tab" data-page="index.html" onclick="navTo('index.html')"><span class="tab-icon">🏠</span><span class="tab-lbl">Home</span></button>
+    <button class="nav-tab active" data-page="book.html" onclick="navTo('book.html')"><span class="tab-icon">📋</span><span class="tab-lbl">Book</span></button>
+    <button class="nav-tab" data-page="track.html" onclick="navTo('track.html')"><span class="tab-icon">📍</span><span class="tab-lbl">Track</span></button>
+    <button class="nav-tab" data-page="chat.html" onclick="navTo('chat.html')"><span class="tab-icon">💬</span><span class="tab-lbl">Chat</span></button>
+    <button class="nav-tab" data-page="profile.html" onclick="navTo('profile.html')"><span class="tab-icon">👤</span><span class="tab-lbl">Profile</span></button>
+  </nav>
+</div>
+
+<!-- SERVICE PICKER MODAL -->
+<div class="modal-overlay" id="svcPickerModal">
+  <div class="modal-sheet">
+    <div class="modal-handle"></div>
+    <div class="modal-title">Choose a Service</div>
+    <div id="svcPickerList" style="display:flex;flex-direction:column;gap:8px;"></div>
+  </div>
+</div>
+
+<script src="js/app.js"></script>
+<script type="module">
+import { initializeApp }   from "https://www.gstatic.com/firebasejs/12.13.0/firebase-app.js";
+import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-auth.js";
+import { getFirestore, collection, addDoc, serverTimestamp }
+  from "https://www.gstatic.com/firebasejs/12.13.0/firebase-firestore.js";
+
+const app  = initializeApp(FIREBASE_CONFIG);
+const auth = getAuth(app);
+const db   = getFirestore(app);
+
+const SERVICES = [
+  { id:'doctor',name:'Professional Doctors',icon:'👨‍⚕️',cat:'Health Care'},
+  { id:'personal',name:'Personal Care',icon:'🫶',cat:'Health Care'},
+  { id:'senior',name:'Senior Care',icon:'👴',cat:'Health Care'},
+  { id:'therapy',name:'Occupational Therapy',icon:'🦾',cat:'Health Care'},
+  { id:'companion',name:'Warm Companionship',icon:'🤗',cat:'Health Care'},
+  { id:'medication',name:'Medication Reminders',icon:'💊',cat:'Health Care'},
+  { id:'plumbing',name:'Plumbing',icon:'🔧',cat:'Construction'},
+  { id:'electrical',name:'Electricians',icon:'⚡',cat:'Construction'},
+  { id:'painting',name:'Painters',icon:'🖌️',cat:'Construction'},
+  { id:'decoration',name:'Interior Decorators',icon:'🛋️',cat:'Construction'},
+  { id:'building',name:'Building Constructors',icon:'🏛️',cat:'Construction'},
+  { id:'gardening',name:'Gardeners',icon:'🌿',cat:'Construction'},
+  { id:'housekeeping',name:'Housekeeping',icon:'🏠',cat:'Non-Medical'},
+  { id:'nanny',name:'Nanny / Childcare',icon:'👶',cat:'Non-Medical'},
+  { id:'cook',name:'Cooks / Chefs',icon:'🍳',cat:'Non-Medical'},
+  { id:'laundry',name:'Laundry Services',icon:'🧺',cat:'Non-Medical'},
+  { id:'driver',name:'Drivers & Ushers',icon:'🚗',cat:'Non-Medical'},
+  { id:'cleaning',name:'Office Cleaners',icon:'🧹',cat:'Non-Medical'},
+];
+
+let selectedService = JSON.parse(localStorage.getItem('selectedService') || 'null');
+let selectedDate = null;
+let selectedTime = null;
+let currentUser  = null;
+
+// Load pre-selected service
+if (selectedService) {
+  const s = SERVICES.find(x => x.id === selectedService.id) || selectedService;
+  document.getElementById('selectedName').textContent = s.name || selectedService.name;
+  document.getElementById('selectedIcon').textContent = s.icon || '🔧';
+}
+
+onAuthStateChanged(auth, user => { currentUser = user; });
+
+// Build date grid (next 8 days)
+const dateGrid = document.getElementById('dateGrid');
+const days = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+for (let i = 1; i <= 8; i++) {
+  const d = new Date(); d.setDate(d.getDate() + i);
+  const chip = document.createElement('div');
+  chip.className = 'date-chip';
+  chip.innerHTML = `<div class="dc-day">${days[d.getDay()]}</div><div class="dc-num">${d.getDate()}</div><div class="dc-mon">${months[d.getMonth()]}</div>`;
+  chip.dataset.date = d.toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'});
+  chip.onclick = function() {
+    document.querySelectorAll('.date-chip').forEach(c => c.classList.remove('selected'));
+    this.classList.add('selected');
+    selectedDate = this.dataset.date;
+  };
+  dateGrid.appendChild(chip);
+}
+
+window.selectTime = function(el, time) {
+  document.querySelectorAll('.time-chip').forEach(c => c.classList.remove('selected'));
+  el.classList.add('selected');
+  selectedTime = time;
+};
+
+window.goStep = function(n) {
+  // Validate step 1
+  if (n === 2) {
+    const name  = document.getElementById('b-name').value.trim();
+    const phone = document.getElementById('b-phone').value.trim();
+    const email = document.getElementById('b-email').value.trim();
+    const addr  = document.getElementById('b-address').value.trim();
+    if (!name||!phone||!email||!addr) { showToast('Please fill in all required fields','error'); return; }
+    if (!selectedService) { showToast('Please select a service first','error'); return; }
+  }
+  // Validate step 2
+  if (n === 3) {
+    if (!selectedDate) { showToast('Please choose a date','error'); return; }
+    if (!selectedTime) { showToast('Please choose a time','error'); return; }
+    // Populate confirm
+    document.getElementById('conf-service').textContent  = selectedService?.name || '—';
+    document.getElementById('conf-name').textContent     = document.getElementById('b-name').value;
+    document.getElementById('conf-phone').textContent    = document.getElementById('b-phone').value;
+    document.getElementById('conf-email').textContent    = document.getElementById('b-email').value;
+    document.getElementById('conf-address').textContent  = document.getElementById('b-address').value;
+    document.getElementById('conf-date').textContent     = selectedDate;
+    document.getElementById('conf-time').textContent     = selectedTime;
+    document.getElementById('conf-notes').textContent    = document.getElementById('b-notes').value || 'None';
+  }
+  document.querySelectorAll('.form-step').forEach(s => s.classList.remove('active'));
+  document.getElementById('step'+n).classList.add('active');
+  // Update step dots
+  for(let i=1;i<=3;i++){
+    const dot = document.getElementById('sd'+i);
+    dot.className = 'step-dot ' + (i<n?'done':i===n?'active':'waiting');
+    dot.textContent = i<n?'✓':i;
+  }
+  for(let i=1;i<=2;i++){
+    document.getElementById('sl'+i)?.classList.toggle('done',i<n);
+  }
+  window.scrollTo(0,0);
+};
+
+window.submitBooking = async function() {
+  const btn = document.getElementById('submitBookingBtn');
+  btn.textContent = 'Submitting...'; btn.disabled = true;
+  try {
+    await addDoc(collection(db,'bookings'), {
+      service:   selectedService?.name || 'Not specified',
+      serviceId: selectedService?.id   || '',
+      clientName:  document.getElementById('b-name').value.trim(),
+      clientPhone: document.getElementById('b-phone').value.trim(),
+      clientEmail: document.getElementById('b-email').value.trim(),
+      address:     document.getElementById('b-address').value.trim(),
+      notes:       document.getElementById('b-notes').value.trim(),
+      date:        selectedDate,
+      time:        selectedTime,
+      status:      'pending',
+      clientId:    currentUser?.uid || 'guest',
+      createdAt:   serverTimestamp(),
+    });
+    localStorage.removeItem('selectedService');
+    showToast('Booking submitted! We will contact you within 24 hours ✅','success');
+    setTimeout(() => navTo('track.html'), 2000);
+  } catch(e) {
+    showToast('Error submitting. Please try again.','error');
+    btn.textContent='Confirm Booking ✓'; btn.disabled=false;
+  }
+};
+
+window.showServicePicker = function() {
+  const list = document.getElementById('svcPickerList');
+  list.innerHTML = SERVICES.map(s => `
+    <div onclick="pickService('${s.id}','${s.name}','${s.icon}')"
+      style="display:flex;align-items:center;gap:12px;padding:12px;border-radius:10px;border:1px solid var(--border);cursor:pointer;background:var(--off);transition:all .2s;"
+      onmouseover="this.style.background='var(--light)'" onmouseout="this.style.background='var(--off)'">
+      <span style="font-size:1.4rem;">${s.icon}</span>
+      <div>
+        <div style="font-family:Barlow Condensed,sans-serif;font-size:.9rem;font-weight:800;color:var(--navy);text-transform:uppercase;letter-spacing:.03em;">${s.name}</div>
+        <div style="font-size:.7rem;color:var(--tmuted);">${s.cat}</div>
+      </div>
+    </div>`).join('');
+  document.getElementById('svcPickerModal').classList.add('open');
+};
+
+window.pickService = function(id, name, icon) {
+  selectedService = {id,name,icon};
+  localStorage.setItem('selectedService', JSON.stringify(selectedService));
+  document.getElementById('selectedName').textContent = name;
+  document.getElementById('selectedIcon').textContent = icon;
+  document.getElementById('svcPickerModal').classList.remove('open');
+};
+
+document.getElementById('svcPickerModal').addEventListener('click', e => {
+  if (e.target.id === 'svcPickerModal') e.target.classList.remove('open');
+});
+</script>
+</body>
+</html>
