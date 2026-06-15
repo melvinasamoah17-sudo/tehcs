@@ -1,9 +1,3 @@
-cat > /home/claude/tehcs-app/css/app.css << 'ENDCSS'
-/* =============================================
-   TEHCS App — Mobile CSS (Fixed)
-   Navy #1B2B5E | Gold #F5A623 | Red #E63329
-============================================= */
-
 @import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800;900&family=Nunito:wght@300;400;500;600;700&display=swap');
 
 *, *::before, *::after {
