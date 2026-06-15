@@ -2,601 +2,612 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-  <meta name="theme-color" content="#101D3F">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="apple-mobile-web-app-title" content="TEHCS">
-  <title>TEHCS App</title>
-  <link rel="manifest" href="manifest.json">
-  <link rel="apple-touch-icon" href="icons/icon-192.png">
-  <link rel="stylesheet" href="css/app.css">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="TEHCS — Twitch Empire Home Care Service. Reliable Home Health Care, Construction and Non-Health Care Service Provider serving Ghana and the UK.">
+  <title>TEHCS — Twitch Empire Home Care Service</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
 
-<!-- ══ AUTH ══ -->
-<div class="auth-screen" id="authScreen">
-  <div class="auth-card">
-    <div class="auth-logo">
-      <img src="../images/tehcs.jpg" class="auth-logo-img" alt="TEHCS"
-           onerror="this.style.display='none';document.querySelector('.auth-logo-fallback').style.display='flex'">
-      <div class="auth-logo-fallback">TEHCS</div>
-      <h2>TEHCS App</h2>
-      <p>Book services &amp; track your requests</p>
+<!-- ══════════════════════════
+     NAVIGATION
+══════════════════════════ -->
+<nav id="navbar" role="navigation" aria-label="Main navigation">
+  <a href="#home" class="nav-logo" aria-label="TEHCS Home">
+    <div class="nav-logo-icon">TEHCS</div>
+    <div class="nav-logo-text">
+      <span class="nav-logo-name">Twitch Empire</span>
+      <span class="nav-logo-tagline">Home Care Service</span>
     </div>
-    <div class="auth-tabs">
-      <button class="auth-tab active" onclick="switchAuth('login')"    id="tab-login">Sign In</button>
-      <button class="auth-tab"        onclick="switchAuth('register')" id="tab-register">Register</button>
-    </div>
-    <div class="auth-error" id="authError"></div>
+  </a>
 
-    <!-- LOGIN -->
-    <div id="auth-login">
-      <div class="f-group">
-        <label>Email</label>
-        <input type="email" id="login-email" placeholder="you@example.com" autocomplete="email">
-      </div>
-      <div class="f-group">
-        <label>Password</label>
-        <input type="password" id="login-pwd" placeholder="••••••••" autocomplete="current-password">
-      </div>
-      <button class="btn-full btn-navy" onclick="doLogin()" id="loginBtn">Sign In</button>
-      <p style="text-align:center;margin-top:12px;font-size:.76rem;color:var(--tmuted);">
-        <a href="#" onclick="doReset();return false;" style="color:var(--navy);text-decoration:none;font-weight:600;">Forgot password?</a>
+  <ul class="nav-links">
+    <li><a href="#home">Home</a></li>
+    <li><a href="#services">Services</a></li>
+    <li><a href="#why">Why Us</a></li>
+    <li><a href="#process">Our Process</a></li>
+    <li><a href="#testimonials">Reviews</a></li>
+    <li><a href="#contact" class="nav-cta-btn">Contact Us</a></li>
+  </ul>
+
+  <button class="hamburger" aria-label="Toggle menu" aria-expanded="false">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
+
+
+<!-- ══════════════════════════
+     HERO
+══════════════════════════ -->
+<section id="home" aria-label="Hero">
+  <div class="hero-geo" aria-hidden="true"></div>
+  <div class="hero-diagonal" aria-hidden="true"></div>
+
+  <div class="hero-content">
+    <!-- LEFT -->
+    <div class="hero-left">
+      <span class="hero-badge">Ghana & UK · Trusted Since 2010</span>
+
+      <h1 class="hero-title">
+        We Believe<br>
+        Every<br>
+        <em class="hero-title-accent">Home Deserves</em><br>
+        A Shine.
+      </h1>
+
+      <p class="hero-tagline">Reliable Home Health Care, Construction &amp; Non-Health Care</p>
+
+      <p class="hero-desc">
+        TEHCS provides care services to elderly, disabled and people of all ages' physical conditions and cognitive abilities, who would like to remain living at home, yet require assistance with certain daily, weekly and monthly activities.
       </p>
-    </div>
 
-    <!-- REGISTER -->
-    <div id="auth-register" style="display:none">
-      <div class="f-group">
-        <label>Full Name</label>
-        <input type="text" id="reg-name" placeholder="John Mensah" autocomplete="name">
-      </div>
-      <div class="f-group">
-        <label>Email</label>
-        <input type="email" id="reg-email" placeholder="you@example.com" autocomplete="email">
-      </div>
-      <div class="f-group">
-        <label>Phone / WhatsApp</label>
-        <input type="tel" id="reg-phone" placeholder="+233 or +44...">
-      </div>
-      <div class="f-group">
-        <label>Password</label>
-        <input type="password" id="reg-pwd" placeholder="Min. 8 characters" autocomplete="new-password">
-      </div>
-      <button class="btn-full btn-gold" onclick="doRegister()" id="registerBtn">Create Account</button>
-    </div>
-    <p style="text-align:center;margin-top:14px;font-size:.7rem;color:var(--tmuted);">🔒 Your data is secure &amp; encrypted</p>
-  </div>
-</div>
-
-<!-- ══ APP ══ -->
-<div id="app" style="display:none">
-
-  <!-- NAV -->
-  <div class="app-nav">
-    <div class="app-nav-logo">
-      <img src="../images/tehcs.jpg" class="app-logo-img" alt="TEHCS"
-           onerror="this.style.display='none';document.querySelector('.app-logo-fallback').style.display='flex'">
-      <div class="app-logo-fallback" style="display:none">TEHCS</div>
-      <div style="margin-left:2px;">
-        <div class="app-nav-title">TEHCS</div>
-        <div class="app-nav-sub">Home Care Service</div>
-      </div>
-    </div>
-    <div class="app-nav-right">
-      <button class="app-nav-btn notif-wrap" onclick="showToast('No new notifications','')">🔔</button>
-      <button class="app-nav-btn" onclick="showTab('profile')">👤</button>
-    </div>
-  </div>
-
-  <!-- SCROLL -->
-  <div class="app-scroll" id="appScroll">
-
-    <!-- ══ HOME ══ -->
-    <div class="page active" id="page-home">
-      <div class="home-hero">
-        <div class="home-hero-greeting" id="heroGreeting">Good day,</div>
-        <div class="home-hero-name">Welcome, <span id="heroName">there</span> 👋</div>
-        <div class="home-search">
-          <span>🔍</span>
-          <input type="text" placeholder="Search services..." oninput="filterSvcs(this.value)">
-        </div>
+      <div class="hero-actions">
+        <a href="#services" class="btn btn-primary">Explore Services</a>
+        <a href="#contact" class="btn btn-outline-white">Free Consultation</a>
       </div>
 
-      <div class="home-stats">
-        <div class="home-stat"><div class="home-stat-n" id="statBookings">0</div><div class="home-stat-l">Bookings</div></div>
-        <div class="home-stat"><div class="home-stat-n">3</div><div class="home-stat-l">Categories</div></div>
-        <div class="home-stat"><div class="home-stat-n">24/7</div><div class="home-stat-l">Support</div></div>
-      </div>
-
-      <div class="section">
-        <div class="section-title">Our Services <a href="#" onclick="showTab('book');return false;">All →</a></div>
-        <div class="services-scroll" id="svcsScroll">
-          <div class="svc-chip" data-name="Home Health Care"     onclick="openBook('Home Health Care','🩺')">    <span class="svc-chip-icon">🩺</span><div class="svc-chip-name">Home Health</div><div class="svc-chip-cat">Healthcare</div></div>
-          <div class="svc-chip" data-name="Senior Care"          onclick="openBook('Senior Care','👴')">         <span class="svc-chip-icon">👴</span><div class="svc-chip-name">Senior Care</div><div class="svc-chip-cat">Healthcare</div></div>
-          <div class="svc-chip" data-name="Personal Care"        onclick="openBook('Personal Care','🫶')">       <span class="svc-chip-icon">🫶</span><div class="svc-chip-name">Personal Care</div><div class="svc-chip-cat">Healthcare</div></div>
-          <div class="svc-chip" data-name="Medication Reminders" onclick="openBook('Medication Reminders','💊')"><span class="svc-chip-icon">💊</span><div class="svc-chip-name">Medication</div><div class="svc-chip-cat">Healthcare</div></div>
-          <div class="svc-chip" data-name="Occupational Therapy" onclick="openBook('Occupational Therapy','🦾')"><span class="svc-chip-icon">🦾</span><div class="svc-chip-name">OT Therapy</div><div class="svc-chip-cat">Healthcare</div></div>
-          <div class="svc-chip" data-name="Plumbing"             onclick="openBook('Plumbing','🔧')">            <span class="svc-chip-icon">🔧</span><div class="svc-chip-name">Plumbing</div><div class="svc-chip-cat">Construction</div></div>
-          <div class="svc-chip" data-name="Electrical"           onclick="openBook('Electrical Work','⚡')">     <span class="svc-chip-icon">⚡</span><div class="svc-chip-name">Electrical</div><div class="svc-chip-cat">Construction</div></div>
-          <div class="svc-chip" data-name="Painting"             onclick="openBook('Painting','🖌️')">           <span class="svc-chip-icon">🖌️</span><div class="svc-chip-name">Painting</div><div class="svc-chip-cat">Construction</div></div>
-          <div class="svc-chip" data-name="Interior Decoration"  onclick="openBook('Interior Decoration','🛋️')"><span class="svc-chip-icon">🛋️</span><div class="svc-chip-name">Decoration</div><div class="svc-chip-cat">Construction</div></div>
-          <div class="svc-chip" data-name="Building"             onclick="openBook('Building Construction','🏛️')"><span class="svc-chip-icon">🏛️</span><div class="svc-chip-name">Building</div><div class="svc-chip-cat">Construction</div></div>
-          <div class="svc-chip" data-name="Housekeeping"         onclick="openBook('Housekeeping','🏠')">        <span class="svc-chip-icon">🏠</span><div class="svc-chip-name">Housekeeping</div><div class="svc-chip-cat">Non-Medical</div></div>
-          <div class="svc-chip" data-name="Cook Chef"            onclick="openBook('Cook / Chef','👨‍🍳')">      <span class="svc-chip-icon">👨‍🍳</span><div class="svc-chip-name">Cook / Chef</div><div class="svc-chip-cat">Non-Medical</div></div>
-          <div class="svc-chip" data-name="Nanny"                onclick="openBook('Nanny / Childcare','👶')">   <span class="svc-chip-icon">👶</span><div class="svc-chip-name">Nanny</div><div class="svc-chip-cat">Non-Medical</div></div>
-          <div class="svc-chip" data-name="Driver"               onclick="openBook('Driver','🚗')">              <span class="svc-chip-icon">🚗</span><div class="svc-chip-name">Driver</div><div class="svc-chip-cat">Non-Medical</div></div>
-          <div class="svc-chip" data-name="Laundry"              onclick="openBook('Laundry','🧺')">             <span class="svc-chip-icon">🧺</span><div class="svc-chip-name">Laundry</div><div class="svc-chip-cat">Non-Medical</div></div>
-        </div>
-      </div>
-
-      <div class="section" style="padding-top:0">
-        <div class="section-title">Recent Bookings <a href="#" onclick="showTab('bookings');return false;">All →</a></div>
-        <div id="recentBookings">
-          <div style="text-align:center;padding:22px;color:var(--tmuted);font-size:.84rem;font-weight:300;">
-            Tap a service above to book! 👆
-          </div>
-        </div>
-      </div>
-
-      <div style="margin:0 16px 20px;background:var(--navy-dk);border-radius:var(--r-md);padding:16px;display:flex;align-items:center;justify-content:space-between;gap:8px;">
+      <div class="hero-stats">
         <div>
-          <div style="font-family:'Barlow Condensed',sans-serif;font-size:.9rem;font-weight:800;color:#fff;text-transform:uppercase;letter-spacing:.04em;">Need help?</div>
-          <div style="font-size:.72rem;color:rgba(255,255,255,.42);font-weight:300;margin-top:1px;">Always available</div>
+          <div class="hero-stat-num">100%</div>
+          <div class="hero-stat-label">Trusted</div>
         </div>
-        <div style="display:flex;gap:8px;">
-          <a href="tel:+233240699329" style="width:34px;height:34px;border-radius:50%;background:var(--gold);color:var(--navy-dk);display:flex;align-items:center;justify-content:center;text-decoration:none;font-size:.9rem;">📞</a>
-          <a href="https://wa.me/233240699329" target="_blank" style="width:34px;height:34px;border-radius:50%;background:#25D366;color:#fff;display:flex;align-items:center;justify-content:center;text-decoration:none;font-size:.9rem;">💬</a>
+        <div class="hero-stat-divider"></div>
+        <div>
+          <div class="hero-stat-num">3</div>
+          <div class="hero-stat-label">Service Categories</div>
         </div>
-      </div>
-    </div>
-
-    <!-- ══ BOOKINGS ══ -->
-    <div class="page" id="page-bookings">
-      <div class="section">
-        <div style="display:flex;gap:7px;margin-bottom:14px;overflow-x:auto;padding-bottom:4px;">
-          <button onclick="filterBk('all')"      id="bk-all"      style="flex-shrink:0;padding:7px 14px;border-radius:100px;border:none;cursor:pointer;font-family:'Barlow Condensed',sans-serif;font-size:.72rem;font-weight:800;letter-spacing:.05em;text-transform:uppercase;background:var(--navy);color:#fff;transition:all .2s;">All</button>
-          <button onclick="filterBk('pending')"  id="bk-pending"  style="flex-shrink:0;padding:7px 14px;border-radius:100px;border:1px solid var(--border);cursor:pointer;font-family:'Barlow Condensed',sans-serif;font-size:.72rem;font-weight:800;letter-spacing:.05em;text-transform:uppercase;background:var(--white);color:var(--tmid);transition:all .2s;">Pending</button>
-          <button onclick="filterBk('active')"   id="bk-active"   style="flex-shrink:0;padding:7px 14px;border-radius:100px;border:1px solid var(--border);cursor:pointer;font-family:'Barlow Condensed',sans-serif;font-size:.72rem;font-weight:800;letter-spacing:.05em;text-transform:uppercase;background:var(--white);color:var(--tmid);transition:all .2s;">Active</button>
-          <button onclick="filterBk('complete')" id="bk-complete" style="flex-shrink:0;padding:7px 14px;border-radius:100px;border:1px solid var(--border);cursor:pointer;font-family:'Barlow Condensed',sans-serif;font-size:.72rem;font-weight:800;letter-spacing:.05em;text-transform:uppercase;background:var(--white);color:var(--tmid);transition:all .2s;">Done</button>
-        </div>
-        <div id="allBookings">
-          <div style="text-align:center;padding:40px 16px;color:var(--tmuted);">
-            <div style="font-size:2.4rem;margin-bottom:10px;">📋</div>
-            <div style="font-size:.88rem;font-weight:300;">No bookings yet.</div>
-          </div>
+        <div class="hero-stat-divider"></div>
+        <div>
+          <div class="hero-stat-num">2</div>
+          <div class="hero-stat-label">Countries</div>
         </div>
       </div>
     </div>
 
-    <!-- ══ CHAT ══ -->
-    <div class="page" id="page-chat">
-      <div class="chat-wrap" style="height:calc(100vh - var(--nav-h) - var(--tab-h));">
-        <div class="chat-header">
-          <div class="chat-avatar">T</div>
-          <div>
-            <div class="chat-agent-name">TEHCS Support</div>
-            <div class="chat-agent-status"><span class="online-dot"></span> Usually replies within 1 hour</div>
-          </div>
-        </div>
-        <div class="chat-messages" id="chatMessages">
-          <div>
-            <div class="chat-agent-row"><div class="mini-avatar">T</div><div class="mini-name">TEHCS Team</div></div>
-            <div class="chat-bubble them">👋 Hello! Welcome to TEHCS. How can we help you today? You can ask about services, pricing, or book directly through the app!</div>
-            <div class="chat-time chat-them-time">Now</div>
-          </div>
-        </div>
-        <div class="quick-replies">
-          <button class="quick-reply" onclick="qReply(this)">Book a service</button>
-          <button class="quick-reply" onclick="qReply(this)">Pricing info</button>
-          <button class="quick-reply" onclick="qReply(this)">Track booking</button>
-          <button class="quick-reply" onclick="qReply(this)">Contact TEHCS</button>
-        </div>
-        <div class="chat-input-bar">
-          <textarea class="chat-input" id="chatInput" placeholder="Type a message..." rows="1" onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendMsg();}"></textarea>
-          <button class="chat-send" onclick="sendMsg()">➤</button>
-        </div>
+    <!-- RIGHT CARDS -->
+    <div class="hero-right" aria-hidden="true">
+      <div class="hero-card featured">
+        <span class="hero-card-icon">🏠</span>
+        <h4>Your Home. Our Commitment.</h4>
+        <p>Professional care in your home, hospital, long-term assisted living facilities and other places.</p>
+      </div>
+      <div class="hero-card">
+        <span class="hero-card-icon">🩺</span>
+        <h4>Home Health</h4>
+        <p>Doctors, nurses, therapy &amp; medication support.</p>
+      </div>
+      <div class="hero-card">
+        <span class="hero-card-icon">🏗️</span>
+        <h4>Construction</h4>
+        <p>Plumbers, electricians, builders &amp; decorators.</p>
       </div>
     </div>
-
-    <!-- ══ PROFILE ══ -->
-    <div class="page" id="page-profile">
-      <div class="profile-hero">
-        <div class="profile-avatar" id="profAvatar">U</div>
-        <div class="profile-name"  id="profName">User</div>
-        <div class="profile-email" id="profEmail"></div>
-      </div>
-      <div class="profile-menu">
-        <div class="menu-item" onclick="showTab('bookings')"><span class="menu-icon">📋</span><span class="menu-label">My Bookings</span><span class="menu-arrow">›</span></div>
-        <div class="menu-item" onclick="showTab('chat')"><span class="menu-icon">💬</span><span class="menu-label">Chat with TEHCS</span><span class="menu-arrow">›</span></div>
-        <a href="tel:+233240699329" class="menu-item"><span class="menu-icon">📞</span><span class="menu-label">Call Ghana (+233 240 699 329)</span><span class="menu-arrow">›</span></a>
-        <a href="tel:+447448468070" class="menu-item"><span class="menu-icon">📞</span><span class="menu-label">Call UK (+44 7448 468070)</span><span class="menu-arrow">›</span></a>
-        <a href="mailto:twitchempireinfo@gmail.com" class="menu-item"><span class="menu-icon">✉️</span><span class="menu-label">twitchempireinfo@gmail.com</span><span class="menu-arrow">›</span></a>
-        <a href="https://tehcs.com" target="_blank" class="menu-item"><span class="menu-icon">🌐</span><span class="menu-label">Visit tehcs.com</span><span class="menu-arrow">›</span></a>
-        <div class="menu-item" onclick="doShare()"><span class="menu-icon">📤</span><span class="menu-label">Share App</span><span class="menu-arrow">›</span></div>
-        <div class="menu-item danger" onclick="doSignOut()"><span class="menu-icon">🚪</span><span class="menu-label">Sign Out</span><span class="menu-arrow">›</span></div>
-      </div>
-    </div>
-
-  </div><!-- /scroll -->
-
-  <!-- TAB BAR -->
-  <div class="tab-bar">
-    <button class="tab-item active" id="tab-home"     onclick="showTab('home')">    <span class="tab-icon">🏠</span><span class="tab-label">Home</span></button>
-    <button class="tab-item"        id="tab-book"     onclick="showTab('book')">    <span class="tab-icon">➕</span><span class="tab-label">Book</span></button>
-    <button class="tab-item"        id="tab-bookings" onclick="showTab('bookings')"><span class="tab-icon">📋</span><span class="tab-label">Bookings</span><span class="tab-badge" id="bkBadge" style="display:none">0</span></button>
-    <button class="tab-item"        id="tab-chat"     onclick="showTab('chat')">    <span class="tab-icon">💬</span><span class="tab-label">Chat</span></button>
-    <button class="tab-item"        id="tab-profile"  onclick="showTab('profile')"> <span class="tab-icon">👤</span><span class="tab-label">Profile</span></button>
   </div>
+</section>
 
-</div><!-- /app -->
 
-<!-- ══ BOOK MODAL ══ -->
-<div class="modal-overlay" id="bookModal" onclick="if(event.target===this)closeBook()">
-  <div class="modal-sheet">
-    <div class="modal-handle"></div>
-    <h3 id="bookTitle">Book a Service</h3>
-    <div id="bookFormWrap">
-      <div class="f-group">
-        <label>Service</label>
-        <input type="text" id="bk-service" readonly style="background:var(--light);color:var(--tmid);">
-      </div>
-      <div class="date-row">
-        <div class="f-group"><label>Date *</label><input type="date" id="bk-date"></div>
-        <div class="f-group"><label>Time *</label><input type="time" id="bk-time"></div>
-      </div>
-      <div class="f-group"><label>Address / Location *</label><input type="text" id="bk-address" placeholder="Your home address"></div>
-      <div class="f-group"><label>Notes (optional)</label><textarea id="bk-notes" placeholder="Any specific details..."></textarea></div>
-      <div style="background:rgba(245,166,35,.1);border:1px solid rgba(245,166,35,.2);border-radius:9px;padding:11px 13px;margin-bottom:14px;font-size:.8rem;color:var(--tmid);line-height:1.6;">
-        📞 We'll contact you within <strong>24 hours</strong> to confirm your booking.
-      </div>
-      <button class="btn-full btn-navy" onclick="submitBook()" id="bookSubmitBtn">Confirm Booking</button>
-    </div>
-    <div class="success-screen" id="bookSuccess">
-      <div class="success-circle">✅</div>
-      <h3>Booking Sent!</h3>
-      <p>Your request has been received. TEHCS will contact you within 24 hours to confirm.</p>
-      <button class="btn-full btn-gold" onclick="closeBook()">Done</button>
-    </div>
+<!-- TICKER BAND -->
+<div class="ticker" aria-hidden="true">
+  <div class="ticker-track">
+    <span class="ticker-item">Home Health Care</span>
+    <span class="ticker-item">Senior Care</span>
+    <span class="ticker-item">Construction Services</span>
+    <span class="ticker-item">Personal Care</span>
+    <span class="ticker-item">Plumbing &amp; Electrical</span>
+    <span class="ticker-item">Companionship</span>
+    <span class="ticker-item">Interior Decoration</span>
+    <span class="ticker-item">Housekeeping</span>
+    <span class="ticker-item">Medication Reminders</span>
+    <span class="ticker-item">Laundry Services</span>
+    <span class="ticker-item">Occupational Therapy</span>
+    <span class="ticker-item">Carpentry Works</span>
+    <!-- duplicate for seamless loop -->
+    <span class="ticker-item">Home Health Care</span>
+    <span class="ticker-item">Senior Care</span>
+    <span class="ticker-item">Construction Services</span>
+    <span class="ticker-item">Personal Care</span>
+    <span class="ticker-item">Plumbing &amp; Electrical</span>
+    <span class="ticker-item">Companionship</span>
+    <span class="ticker-item">Interior Decoration</span>
+    <span class="ticker-item">Housekeeping</span>
+    <span class="ticker-item">Medication Reminders</span>
+    <span class="ticker-item">Laundry Services</span>
+    <span class="ticker-item">Occupational Therapy</span>
+    <span class="ticker-item">Carpentry Works</span>
   </div>
 </div>
 
-<!-- TOAST -->
-<div class="toast" id="toast"></div>
 
-<!-- INSTALL BANNER -->
-<div class="install-banner" id="installBanner">
-  <span style="font-size:1.3rem;">📱</span>
-  <div class="install-banner-text"><strong>Install TEHCS App</strong><span>Add to home screen</span></div>
-  <button class="install-banner-btn" onclick="doInstall()">Install</button>
-  <button class="install-close" onclick="document.getElementById('installBanner').classList.remove('show')">✕</button>
-</div>
+<!-- ══════════════════════════
+     SERVICES
+══════════════════════════ -->
+<section id="services" aria-label="Our Services">
+  <div class="container">
 
-<!-- EmailJS -->
-<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+    <div class="services-header reveal">
+      <span class="section-label">Our Services</span>
+      <h2>Three pillars.<br>One trusted team.</h2>
+      <p>From professional healthcare to construction and non-medical support — TEHCS delivers expert, personalized assistance wherever you need it.</p>
+    </div>
 
-<!-- Firebase -->
-<script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-app.js";
-import { getAuth, onAuthStateChanged, signInWithEmailAndPassword,
-  createUserWithEmailAndPassword, signOut as fbSignOut,
-  updateProfile, sendPasswordResetEmail }
-  from "https://www.gstatic.com/firebasejs/12.13.0/firebase-auth.js";
-import { getFirestore, collection, addDoc, query, where,
-  orderBy, onSnapshot, serverTimestamp }
-  from "https://www.gstatic.com/firebasejs/12.13.0/firebase-firestore.js";
+    <!-- TABS -->
+    <div class="services-tabs reveal">
+      <button class="tab-btn active gold" data-tab="health">🩺 Home Health Care</button>
+      <button class="tab-btn" data-tab="construction">🏗️ Construction</button>
+      <button class="tab-btn" data-tab="nonmedical">🏡 Non-Medical</button>
+    </div>
 
-const FB = {
-  apiKey:"AIzaSyBg_fCZkhkzNr41f6xespzlRucs6wVk9ck",
-  authDomain:"tehcs-675c6.firebaseapp.com",
-  projectId:"tehcs-675c6",
-  storageBucket:"tehcs-675c6.firebasestorage.app",
-  messagingSenderId:"428200196151",
-  appId:"1:428200196151:web:2dee682eda618b2ac7e7b2"
-};
-const EMAILJS = {
-  KEY: 'L79E9hHNieJbHYZL0',
-  SVC: 'service_g0m8tdi',
-  TPL_BUSINESS: 'template_kswcorr',
-  TPL_CLIENT:   'template_zljgoy6',
-};
-
-const app  = initializeApp(FB);
-const auth = getAuth(app);
-const db   = getFirestore(app);
-emailjs.init(EMAILJS.KEY);
-
-let currentUser = null;
-let allBookings = [];
-
-/* ── GREETING ── */
-function greeting() {
-  const h = new Date().getHours();
-  return h < 12 ? 'Good morning,' : h < 17 ? 'Good afternoon,' : 'Good evening,';
-}
-
-/* ── AUTH STATE ── */
-onAuthStateChanged(auth, user => {
-  if (user) {
-    currentUser = user;
-    document.getElementById('authScreen').style.display = 'none';
-    document.getElementById('app').style.display = 'flex';
-    const name = user.displayName || user.email.split('@')[0];
-    document.getElementById('heroGreeting').textContent  = greeting();
-    document.getElementById('heroName').textContent      = name.split(' ')[0];
-    document.getElementById('profName').textContent      = name;
-    document.getElementById('profEmail').textContent     = user.email;
-    document.getElementById('profAvatar').textContent    = name[0].toUpperCase();
-    loadBookings();
-    listenChat();
-  } else {
-    currentUser = null;
-    document.getElementById('authScreen').style.display = 'flex';
-    document.getElementById('app').style.display = 'none';
-  }
-});
-
-/* ── AUTH ── */
-window.doLogin = async function() {
-  const email = document.getElementById('login-email').value.trim();
-  const pwd   = document.getElementById('login-pwd').value;
-  const btn   = document.getElementById('loginBtn');
-  if (!email||!pwd) { authErr('Please enter email and password.'); return; }
-  btn.textContent='Signing in...'; btn.disabled=true;
-  try { await signInWithEmailAndPassword(auth,email,pwd); }
-  catch(e) {
-    authErr({'auth/invalid-credential':'Wrong email or password.','auth/too-many-requests':'Too many attempts. Wait a moment.'}[e.code]||'Login failed.');
-    btn.textContent='Sign In'; btn.disabled=false;
-  }
-};
-
-window.doRegister = async function() {
-  const name  = document.getElementById('reg-name').value.trim();
-  const email = document.getElementById('reg-email').value.trim();
-  const phone = document.getElementById('reg-phone').value.trim();
-  const pwd   = document.getElementById('reg-pwd').value;
-  const btn   = document.getElementById('registerBtn');
-  if (!name||!email||!pwd) { authErr('Please fill in all fields.'); return; }
-  if (pwd.length<8) { authErr('Password must be at least 8 characters.'); return; }
-  btn.textContent='Creating...'; btn.disabled=true;
-  try {
-    const cred = await createUserWithEmailAndPassword(auth,email,pwd);
-    await updateProfile(cred.user,{displayName:name});
-    await addDoc(collection(db,'clients'),{uid:cred.user.uid,name,email,phone,createdAt:serverTimestamp()});
-  } catch(e) {
-    authErr({'auth/email-already-in-use':'Email already registered.','auth/weak-password':'Password too weak.'}[e.code]||'Registration failed.');
-    btn.textContent='Create Account'; btn.disabled=false;
-  }
-};
-
-window.doSignOut = async function() {
-  if (!confirm('Sign out?')) return;
-  await fbSignOut(auth);
-};
-
-window.doReset = async function() {
-  const email = document.getElementById('login-email').value.trim();
-  if (!email) { authErr('Enter your email first.'); return; }
-  await sendPasswordResetEmail(auth,email);
-  const el=document.getElementById('authError');
-  el.textContent='✅ Reset link sent to '+email;
-  el.style.cssText='display:block;background:#f0fdf4;border-color:#86efac;color:#15803d;';
-};
-
-window.switchAuth = function(t) {
-  document.getElementById('auth-login').style.display    = t==='login'    ? 'block':'none';
-  document.getElementById('auth-register').style.display = t==='register' ? 'block':'none';
-  document.getElementById('tab-login').classList.toggle('active',    t==='login');
-  document.getElementById('tab-register').classList.toggle('active', t==='register');
-  document.getElementById('authError').className='auth-error';
-};
-
-function authErr(msg) {
-  const el=document.getElementById('authError');
-  el.textContent=msg; el.classList.add('show');
-}
-
-/* ── BOOKINGS ── */
-function loadBookings() {
-  if (!currentUser) return;
-  const q = query(collection(db,'bookings'),where('uid','==',currentUser.uid),orderBy('createdAt','desc'));
-  onSnapshot(q, snap => {
-    allBookings = snap.docs.map(d=>({id:d.id,...d.data()}));
-    document.getElementById('statBookings').textContent = allBookings.length;
-    renderBk(allBookings,'recentBookings',3);
-    renderBk(allBookings,'allBookings');
-    const pend = allBookings.filter(b=>b.status==='pending'||b.status==='new').length;
-    const badge = document.getElementById('bkBadge');
-    badge.textContent=pend; badge.style.display=pend?'flex':'none';
-  });
-}
-
-function renderBk(list, id, max) {
-  const el = document.getElementById(id);
-  const items = max ? list.slice(0,max) : list;
-  if (!items.length) {
-    el.innerHTML='<div style="text-align:center;padding:28px 16px;color:var(--tmuted);"><div style="font-size:2rem;margin-bottom:8px;">📋</div><div style="font-size:.85rem;font-weight:300;">No bookings yet.</div></div>';
-    return;
-  }
-  el.innerHTML=items.map(b=>`
-    <div class="booking-card">
-      <div class="booking-card-top">
-        <div class="booking-card-service">${b.icon||'🔧'} ${b.service}</div>
-        <span class="booking-status bs-${b.status||'pending'}">${b.status||'pending'}</span>
+    <!-- PANEL: Health -->
+    <div class="services-panel services-grid-3 active" id="panel-health">
+      <div class="service-card health reveal">
+        <span class="service-icon">👨‍⚕️</span>
+        <h3>Professional Doctors</h3>
+        <p>Qualified medical professionals providing home visits, assessments, and ongoing health monitoring for patients of all ages.</p>
       </div>
-      <div class="booking-card-meta">
-        <span>📅 ${b.date||'TBD'}</span>
-        <span>⏰ ${b.time||'TBD'}</span>
+      <div class="service-card health reveal" data-delay="80">
+        <span class="service-icon">🫶</span>
+        <h3>Personal Care</h3>
+        <p>Dignified, compassionate personal assistance with bathing, dressing, grooming, and daily hygiene routines.</p>
       </div>
-      ${b.status==='active'?'<div class="booking-progress"><div class="progress-bar"><div class="progress-fill" style="width:60%"></div></div></div>':''}
-    </div>`).join('');
-}
+      <div class="service-card health reveal" data-delay="160">
+        <span class="service-icon">👴</span>
+        <h3>Senior Care</h3>
+        <p>Specialized care for elderly clients — focused on comfort, safety, independence and quality of life at home.</p>
+      </div>
+      <div class="service-card health reveal" data-delay="240">
+        <span class="service-icon">🦾</span>
+        <h3>Occupational Therapy</h3>
+        <p>Therapists help clients regain daily living skills, improve mobility, and adapt their environment for independence.</p>
+      </div>
+      <div class="service-card health reveal" data-delay="320">
+        <span class="service-icon">🤗</span>
+        <h3>Warm Companionship</h3>
+        <p>Friendly, caring companions for social engagement, emotional support, and a reassuring presence at home.</p>
+      </div>
+      <div class="service-card health reveal" data-delay="400">
+        <span class="service-icon">💊</span>
+        <h3>Medication Reminders &amp; Pharmacist</h3>
+        <p>Scheduled medication reminders and access to pharmacist guidance to ensure proper adherence and safe use.</p>
+      </div>
+    </div>
 
-window.filterBk = function(s) {
-  ['all','pending','active','complete'].forEach(k => {
-    const el=document.getElementById('bk-'+k);
-    el.style.background=k===s?'var(--navy)':'var(--white)';
-    el.style.color=k===s?'#fff':'var(--tmid)';
-    el.style.border=k===s?'none':'1px solid var(--border)';
-  });
-  renderBk(s==='all'?allBookings:allBookings.filter(b=>(b.status||'pending')===s),'allBookings');
-};
+    <!-- PANEL: Construction -->
+    <div class="services-panel services-grid-4" id="panel-construction">
+      <div class="service-card construction reveal">
+        <span class="service-icon">🌿</span>
+        <h3>Gardeners</h3>
+        <p>Lawn care, landscaping, pruning, and outdoor maintenance to keep your property looking its best.</p>
+      </div>
+      <div class="service-card construction reveal" data-delay="80">
+        <span class="service-icon">🧹</span>
+        <h3>Factory Cleaners</h3>
+        <p>Industrial and factory cleaning services carried out professionally and safely by trained staff.</p>
+      </div>
+      <div class="service-card construction reveal" data-delay="160">
+        <span class="service-icon">🖌️</span>
+        <h3>Painters</h3>
+        <p>Interior and exterior painting with premium finishes, detailed prep work, and clean results.</p>
+      </div>
+      <div class="service-card construction reveal" data-delay="240">
+        <span class="service-icon">🛋️</span>
+        <h3>Interior Decorators</h3>
+        <p>Transform your living spaces with expert styling, colour consultation, and furnishing guidance.</p>
+      </div>
+      <div class="service-card construction reveal" data-delay="80">
+        <span class="service-icon">🔧</span>
+        <h3>Plumbers</h3>
+        <p>Licensed plumbers for repairs, installations, emergency leaks, and full plumbing system upgrades.</p>
+      </div>
+      <div class="service-card construction reveal" data-delay="160">
+        <span class="service-icon">⚡</span>
+        <h3>Electricians</h3>
+        <p>Certified electricians for safe wiring, installations, fault-finding, and compliance work.</p>
+      </div>
+      <div class="service-card construction reveal" data-delay="240">
+        <span class="service-icon">🪚</span>
+        <h3>Carpentry Works</h3>
+        <p>Custom carpentry for furniture, fittings, doors, and bespoke woodwork to your specification.</p>
+      </div>
+      <div class="service-card construction reveal" data-delay="320">
+        <span class="service-icon">🏛️</span>
+        <h3>Building Constructors</h3>
+        <p>Full building and renovation construction — from foundations to finishing, managed end-to-end.</p>
+      </div>
+    </div>
 
-/* ── BOOK MODAL ── */
-window.openBook = function(svc,icon) {
-  document.getElementById('bk-service').value=svc;
-  document.getElementById('bookTitle').textContent=icon+' Book: '+svc;
-  document.getElementById('bookFormWrap').style.display='block';
-  document.getElementById('bookSuccess').classList.remove('show');
-  document.getElementById('bk-date').min=new Date().toISOString().split('T')[0];
-  document.getElementById('bookModal').classList.add('open');
-  window._bookIcon=icon;
-};
-window.closeBook=()=>document.getElementById('bookModal').classList.remove('open');
+    <!-- PANEL: Non-Medical -->
+    <div class="services-panel services-grid-4" id="panel-nonmedical">
+      <div class="service-card nonmedical reveal">
+        <span class="service-icon">🏠</span>
+        <h3>House Keepers</h3>
+        <p>Thorough home cleaning, tidying, and household management by trusted, reliable staff.</p>
+      </div>
+      <div class="service-card nonmedical reveal" data-delay="80">
+        <span class="service-icon">🏨</span>
+        <h3>Hotel Keepers</h3>
+        <p>Trained hospitality staff to manage guest services, room upkeep, and hotel operations.</p>
+      </div>
+      <div class="service-card nonmedical reveal" data-delay="160">
+        <span class="service-icon">👶</span>
+        <h3>Nursing (Nannies)</h3>
+        <p>Experienced, caring nannies providing safe, loving childcare and infant support.</p>
+      </div>
+      <div class="service-card nonmedical reveal" data-delay="240">
+        <span class="service-icon">👨‍🍳</span>
+        <h3>Cooks / Chefs</h3>
+        <p>Skilled cooks providing nutritious, home-cooked or gourmet meals to your dietary requirements.</p>
+      </div>
+      <div class="service-card nonmedical reveal" data-delay="80">
+        <span class="service-icon">🧺</span>
+        <h3>Laundry Services</h3>
+        <p>Professional laundry, ironing, and garment care handled with attention and care.</p>
+      </div>
+      <div class="service-card nonmedical reveal" data-delay="160">
+        <span class="service-icon">🛒</span>
+        <h3>Grocery Shoppers</h3>
+        <p>We shop for your essentials so you never have to worry about running out of what you need.</p>
+      </div>
+      <div class="service-card nonmedical reveal" data-delay="240">
+        <span class="service-icon">🚗</span>
+        <h3>Drivers &amp; Ushers</h3>
+        <p>Reliable drivers and ushers for appointments, events, errands, and daily transportation.</p>
+      </div>
+      <div class="service-card nonmedical reveal" data-delay="320">
+        <span class="service-icon">✨</span>
+        <h3>Office Cleaners</h3>
+        <p>Professional commercial and office cleaning services — daily, weekly, or on demand.</p>
+      </div>
+    </div>
 
-window.submitBook = async function() {
-  const date    = document.getElementById('bk-date').value;
-  const time    = document.getElementById('bk-time').value;
-  const address = document.getElementById('bk-address').value.trim();
-  const service = document.getElementById('bk-service').value;
-  const notes   = document.getElementById('bk-notes').value.trim();
-  const btn     = document.getElementById('bookSubmitBtn');
+  </div>
+</section>
 
-  if (!date||!address) { showToast('Please fill in date and address','error'); return; }
 
-  btn.textContent='⏳ Submitting...'; btn.disabled=true;
+<!-- ══════════════════════════
+     WHY CHOOSE US
+══════════════════════════ -->
+<section id="why" aria-label="Why Choose TEHCS">
+  <div class="container">
+    <div class="why-inner">
 
-  try {
-    const name  = currentUser.displayName || currentUser.email;
-    const email = currentUser.email;
-    const ts    = new Date().toLocaleString('en-GB',{timeZone:'Africa/Accra'});
+      <div class="why-left reveal-left">
+        <span class="section-label">Why Choose Us</span>
+        <h2>Trusted by<br>families across<br>Ghana &amp; the UK.</h2>
+        <p>We work closely with clients and their families to provide professional, personalized assistance in their own home, hospital, long-term assisted living facilities and other places.</p>
+        <p>Our multidisciplinary team combines genuine compassion with professional excellence — because your home and your health matter.</p>
+        <div class="trusted-badge">
+          <span class="pct">100%</span>
+          <span class="word">Trusted</span>
+        </div>
+      </div>
 
-    /* 1. Save to Firestore */
-    await addDoc(collection(db,'bookings'),{
-      uid:currentUser.uid, clientName:name, clientEmail:email,
-      service, icon:window._bookIcon||'🔧',
-      date, time, address, notes, status:'pending',
-      createdAt:serverTimestamp()
-    });
+      <div class="why-grid reveal-right">
+        <div class="why-card">
+          <span class="why-card-icon">🎓</span>
+          <h4>Professional &amp; Qualified Team</h4>
+          <p>Every staff member is fully vetted, credentialed, and trained in their field — no exceptions.</p>
+        </div>
+        <div class="why-card">
+          <span class="why-card-icon">⏱️</span>
+          <h4>Reliable &amp; On-Time Service</h4>
+          <p>We show up when we say we will. Punctuality and dependability are core to our culture.</p>
+        </div>
+        <div class="why-card">
+          <span class="why-card-icon">❤️</span>
+          <h4>Customer-Focused Approach</h4>
+          <p>Your preferences, comfort, and goals shape every care and service plan we create.</p>
+        </div>
+        <div class="why-card">
+          <span class="why-card-icon">🏆</span>
+          <h4>Quality &amp; Accountability</h4>
+          <p>We hold ourselves to the highest standards and take full responsibility for every result.</p>
+        </div>
+      </div>
 
-    /* 2. Email to TEHCS admin */
-    await emailjs.send(EMAILJS.SVC, EMAILJS.TPL_BUSINESS, {
-      from_name:  name,
-      from_email: email,
-      phone:      'Via App',
-      country:    'Via App',
-      service,
-      message:    `NEW APP BOOKING\nService: ${service}\nDate: ${date}\nTime: ${time}\nAddress: ${address}\nNotes: ${notes||'None'}`,
-      timestamp:  ts,
-      reply_to:   email,
-    });
+    </div>
+  </div>
+</section>
 
-    /* 3. Confirmation email to client */
-    await emailjs.send(EMAILJS.SVC, EMAILJS.TPL_CLIENT, {
-      from_name:  name,
-      from_email: email,
-      service,
-      message:    `Your booking for ${service} on ${date} at ${time} has been received. We will contact you within 24 hours to confirm.`,
-      timestamp:  ts,
-      reply_to:   'twitchempireinfo@gmail.com',
-    });
 
-    document.getElementById('bookFormWrap').style.display='none';
-    document.getElementById('bookSuccess').classList.add('show');
-    ['bk-date','bk-time','bk-address','bk-notes'].forEach(id=>document.getElementById(id).value='');
+<!-- ══════════════════════════
+     OUR PROCESS
+══════════════════════════ -->
+<section id="process" aria-label="Our Process">
+  <div class="container">
 
-  } catch(e) {
-    console.error(e);
-    showToast('Error submitting. Please try again.','error');
-  }
-  btn.textContent='Confirm Booking'; btn.disabled=false;
-};
+    <div class="process-header reveal">
+      <span class="section-label">Our Process</span>
+      <h2>Simple from<br>start to finish.</h2>
+      <p>Our four-step process ensures a smooth, transparent experience — from your first call to final delivery.</p>
+    </div>
 
-/* ── CHAT ── */
-function listenChat() {
-  if (!currentUser) return;
-  const q = query(collection(db,'chats'),where('uid','==',currentUser.uid),orderBy('createdAt','asc'));
-  onSnapshot(q, snap => {
-    const box = document.getElementById('chatMessages');
-    box.querySelectorAll('.user-msg,.agent-msg').forEach(e=>e.remove());
-    snap.docs.forEach(d=>{
-      const m=d.data(); if(!m.text) return;
-      const div=document.createElement('div');
-      div.className=m.from==='client'?'user-msg':'agent-msg';
-      div.style.marginBottom='4px';
-      div.innerHTML=m.from==='client'
-        ?`<div style="text-align:right"><div class="chat-bubble me">${m.text}</div><div class="chat-time chat-me-time">${fmtT(m.createdAt)}</div></div>`
-        :`<div class="chat-agent-row"><div class="mini-avatar">T</div><div class="mini-name">TEHCS</div></div><div class="chat-bubble them">${m.text}</div><div class="chat-time chat-them-time">${fmtT(m.createdAt)}</div>`;
-      box.appendChild(div);
-    });
-    box.scrollTop=box.scrollHeight;
-  });
-}
+    <div class="process-track">
+      <div class="process-step reveal" data-delay="0">
+        <div class="step-num">01</div>
+        <h3>Assessment &amp;<br>Requirement Gathering</h3>
+        <p>We listen carefully, assess your unique situation, and gather all the information needed to serve you well.</p>
+      </div>
+      <div class="process-step reveal" data-delay="100">
+        <div class="step-num">02</div>
+        <h3>Planning &amp;<br>Resource Allocation</h3>
+        <p>A personalized service plan is created and the right team members are assigned to your case.</p>
+      </div>
+      <div class="process-step reveal" data-delay="200">
+        <div class="step-num">03</div>
+        <h3>Service Execution<br>&amp; Delivery</h3>
+        <p>Our team gets to work — professionally, punctually, and with full attention to your specific needs.</p>
+      </div>
+      <div class="process-step reveal" data-delay="300">
+        <div class="step-num">04</div>
+        <h3>Monitoring, Evaluation<br>&amp; Closure</h3>
+        <p>We review outcomes, gather your feedback, and ensure every detail meets our quality standard.</p>
+      </div>
+    </div>
 
-window.sendMsg = async function() {
-  const inp=document.getElementById('chatInput');
-  const txt=inp.value.trim();
-  if(!txt||!currentUser) return;
-  inp.value=''; inp.style.height='auto';
-  await addDoc(collection(db,'chats'),{
-    uid:currentUser.uid, name:currentUser.displayName||currentUser.email,
-    email:currentUser.email, text:txt, from:'client', createdAt:serverTimestamp()
-  });
-};
+  </div>
+</section>
 
-window.qReply = function(btn) {
-  document.getElementById('chatInput').value=btn.textContent;
-  sendMsg();
-};
 
-/* ── NAVIGATION ── */
-window.showTab = function(name) {
-  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
-  document.querySelectorAll('.tab-item').forEach(t=>t.classList.remove('active'));
-  if (name==='book') { openBook('Select a Service','🔧'); return; }
-  const pg=document.getElementById('page-'+name);
-  if(pg) pg.classList.add('active');
-  const tb=document.getElementById('tab-'+name);
-  if(tb) tb.classList.add('active');
-  document.getElementById('appScroll').scrollTop=0;
-};
+<!-- ══════════════════════════
+     TESTIMONIALS
+══════════════════════════ -->
+<section id="testimonials" aria-label="Client Reviews">
+  <div class="container">
 
-window.filterSvcs = function(v) {
-  document.querySelectorAll('.svc-chip').forEach(c=>{
-    c.style.display=c.dataset.name.toLowerCase().includes(v.toLowerCase())||!v?'':'none';
-  });
-};
+    <div class="testimonials-header reveal">
+      <span class="section-label">Client Stories</span>
+      <h2>Families we've<br>made a difference for.</h2>
+      <p>Real feedback from real people who've experienced the TEHCS difference firsthand.</p>
+    </div>
 
-/* ── SHARE & INSTALL ── */
-window.doShare=function(){
-  navigator.share?navigator.share({title:'TEHCS App',text:'Book home care services with TEHCS!',url:'https://tehcs.com/app'}):navigator.clipboard.writeText('https://tehcs.com/app').then(()=>showToast('Link copied!','success'));
-};
-let deferredPrompt;
-window.addEventListener('beforeinstallprompt',e=>{
-  e.preventDefault(); deferredPrompt=e;
-  setTimeout(()=>document.getElementById('installBanner').classList.add('show'),4000);
-});
-window.doInstall=function(){
-  if(!deferredPrompt) return;
-  deferredPrompt.prompt();
-  deferredPrompt.userChoice.then(()=>{deferredPrompt=null;document.getElementById('installBanner').classList.remove('show');});
-};
+    <div class="reviews-grid">
+      <div class="review-card navy-card reveal">
+        <div class="review-quote">"</div>
+        <div class="review-stars">★★★★★</div>
+        <p class="review-text">TEHCS cared for my father with such kindness and professionalism after his surgery. The nurses were punctual every day and kept us informed at all times. We couldn't be more grateful.</p>
+        <div class="reviewer">
+          <div class="reviewer-avatar">👨</div>
+          <div>
+            <div class="reviewer-name">Kwame A.</div>
+            <div class="reviewer-role">Family Caregiver · Accra, Ghana</div>
+          </div>
+        </div>
+      </div>
 
-/* ── HELPERS ── */
-window.showToast=function(msg,type=''){
-  const t=document.getElementById('toast');
-  t.textContent=msg; t.className='toast show '+type;
-  setTimeout(()=>t.classList.remove('show'),3000);
-};
-function fmtT(ts){
-  if(!ts) return '';
-  const d=ts.toDate?ts.toDate():new Date(ts);
-  return d.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'});
-}
+      <div class="review-card reveal" data-delay="100">
+        <div class="review-quote">"</div>
+        <div class="review-stars">★★★★★</div>
+        <p class="review-text">The plumbing team was outstanding — fast, tidy, and their work has held up perfectly. I also used their housekeeping service and it was equally excellent. Highly recommended.</p>
+        <div class="reviewer">
+          <div class="reviewer-avatar">👩</div>
+          <div>
+            <div class="reviewer-name">Sandra O.</div>
+            <div class="reviewer-role">Homeowner · London, UK</div>
+          </div>
+        </div>
+      </div>
 
-if('serviceWorker' in navigator) navigator.serviceWorker.register('../sw.js').catch(()=>{});
-</script>
+      <div class="review-card reveal" data-delay="200">
+        <div class="review-quote">"</div>
+        <div class="review-stars">★★★★★</div>
+        <p class="review-text">My mum's companion from TEHCS has been a godsend. She's reliable, warm, and genuinely cares. The medication reminders have also improved Mum's health so much. Thank you TEHCS.</p>
+        <div class="reviewer">
+          <div class="reviewer-avatar">🧓</div>
+          <div>
+            <div class="reviewer-name">Ama B.</div>
+            <div class="reviewer-role">Daughter of Care Recipient · Kumasi</div>
+          </div>
+        </div>
+      </div>
+    </div>
 
+  </div>
+</section>
+
+
+<!-- ══════════════════════════
+     CONTACT
+══════════════════════════ -->
+<section id="contact" aria-label="Contact Us">
+  <div class="container">
+
+    <div class="contact-inner">
+
+      <!-- INFO -->
+      <div class="contact-info reveal-left">
+        <span class="section-label">Get In Touch</span>
+        <h2>Let's talk about<br>how we can help.</h2>
+        <p>Whether you need care, construction, or any of our non-medical services — reach out and we'll respond within 24 hours. We're available across Ghana and the UK.</p>
+
+        <div class="contact-items">
+          <div class="contact-item">
+            <div class="contact-item-icon gold">📞</div>
+            <div>
+              <div class="contact-item-label">UK Number</div>
+              <div class="contact-item-value"><a href="tel:+447448468070">+44 7448 468070</a></div>
+            </div>
+          </div>
+          <div class="contact-item">
+            <div class="contact-item-icon red">📱</div>
+            <div>
+              <div class="contact-item-label">Ghana Number</div>
+              <div class="contact-item-value"><a href="tel:+233240699329">+233 240 699 329</a></div>
+            </div>
+          </div>
+          <div class="contact-item">
+            <div class="contact-item-icon navy">☎️</div>
+            <div>
+              <div class="contact-item-label">Landline (Ghana)</div>
+              <div class="contact-item-value"><a href="tel:0302449719">030 244 9719</a></div>
+            </div>
+          </div>
+          <div class="contact-item">
+            <div class="contact-item-icon gold">✉️</div>
+            <div>
+              <div class="contact-item-label">Email</div>
+              <div class="contact-item-value"><a href="mailto:twitchempireinfo@gmail.com">twitchempireinfo@gmail.com</a></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- FORM -->
+      <div class="contact-form-box reveal-right">
+        <h3>Send us a message</h3>
+        <form id="contact-form" novalidate>
+          <div class="form-row-2">
+            <div class="form-group">
+              <label for="fname">First Name</label>
+              <input type="text" id="fname" name="fname" placeholder="John" required>
+            </div>
+            <div class="form-group">
+              <label for="lname">Last Name</label>
+              <input type="text" id="lname" name="lname" placeholder="Mensah" required>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="email">Email Address</label>
+            <input type="email" id="email" name="email" placeholder="you@example.com" required>
+          </div>
+          <div class="form-group">
+            <label for="phone">Phone Number</label>
+            <input type="tel" id="phone" name="phone" placeholder="+233 or +44...">
+          </div>
+          <div class="form-group">
+            <label for="service">Service Needed</label>
+            <select id="service" name="service">
+              <option value="" disabled selected>Select a service...</option>
+              <optgroup label="Home Health Care">
+                <option>Professional Doctor Visit</option>
+                <option>Personal Care</option>
+                <option>Senior Care</option>
+                <option>Occupational Therapy</option>
+                <option>Companionship</option>
+                <option>Medication Reminders</option>
+              </optgroup>
+              <optgroup label="Construction Services">
+                <option>Plumbing</option>
+                <option>Electrical Work</option>
+                <option>Painting</option>
+                <option>Interior Decoration</option>
+                <option>Carpentry</option>
+                <option>Building Construction</option>
+              </optgroup>
+              <optgroup label="Non-Medical Services">
+                <option>Housekeeping</option>
+                <option>Nanny / Childcare</option>
+                <option>Cook / Chef</option>
+                <option>Laundry</option>
+                <option>Driver</option>
+                <option>Office Cleaning</option>
+              </optgroup>
+              <option>Multiple Services</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="message">Your Message</label>
+            <textarea id="message" name="message" placeholder="Tell us more about your situation and how we can help..."></textarea>
+          </div>
+          <button type="submit" class="btn-submit">Send My Request →</button>
+        </form>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+
+<!-- ══════════════════════════
+     FOOTER
+══════════════════════════ -->
+<footer role="contentinfo">
+  <div class="footer-top">
+
+    <div class="footer-brand">
+      <a href="#home" class="nav-logo">
+        <div class="nav-logo-icon">TEHCS</div>
+        <div class="nav-logo-text">
+          <span class="nav-logo-name">Twitch Empire</span>
+          <span class="nav-logo-tagline">Home Care Service</span>
+        </div>
+      </a>
+      <p>Reliable Home Health Care, Construction and Non-Health Care Service Provider. Serving families across Ghana and the United Kingdom.</p>
+      <div class="footer-social">
+        <a href="mailto:twitchempireinfo@gmail.com" class="social-btn" aria-label="Email">✉️</a>
+        <a href="tel:+447448468070" class="social-btn" aria-label="Call UK">📞</a>
+        <a href="tel:+233240699329" class="social-btn" aria-label="Call Ghana">📱</a>
+      </div>
+    </div>
+
+    <div class="footer-col">
+      <h4>Health Care</h4>
+      <ul>
+        <li><a href="#services">Professional Doctors</a></li>
+        <li><a href="#services">Personal Care</a></li>
+        <li><a href="#services">Senior Care</a></li>
+        <li><a href="#services">Occupational Therapy</a></li>
+        <li><a href="#services">Companionship</a></li>
+        <li><a href="#services">Medication Reminders</a></li>
+      </ul>
+    </div>
+
+    <div class="footer-col">
+      <h4>Construction</h4>
+      <ul>
+        <li><a href="#services">Plumbers</a></li>
+        <li><a href="#services">Electricians</a></li>
+        <li><a href="#services">Painters</a></li>
+        <li><a href="#services">Interior Decorators</a></li>
+        <li><a href="#services">Carpentry</a></li>
+        <li><a href="#services">Builders</a></li>
+      </ul>
+    </div>
+
+    <div class="footer-col">
+      <h4>Contact</h4>
+      <ul>
+        <li><a href="tel:+447448468070">+44 7448 468070 (UK)</a></li>
+        <li><a href="tel:+233240699329">+233 240 699 329 (GH)</a></li>
+        <li><a href="tel:0302449719">030 244 9719 (Landline)</a></li>
+        <li><a href="mailto:twitchempireinfo@gmail.com">twitchempireinfo@gmail.com</a></li>
+      </ul>
+    </div>
+
+  </div>
+
+  <div class="footer-bottom">
+    <p>© 2026 TEHCS — Twitch Empire Home Care Service. All rights reserved.</p>
+    <div>
+      <a href="#">Privacy Policy</a>
+      <a href="#">Terms of Service</a>
+      <a href="#">Accessibility</a>
+    </div>
+  </div>
+</footer>
+
+
+<script src="js/main.js"></script>
 </body>
 </html>
