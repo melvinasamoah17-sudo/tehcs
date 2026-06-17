@@ -9,18 +9,230 @@
   <meta name="apple-mobile-web-app-title" content="TEHCS">
   <title>TEHCS App</title>
   <link rel="manifest" href="manifest.json">
-  <link rel="apple-touch-icon" href="icons/icon-192.png">
-  <link rel="stylesheet" href="css/app.css">
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800;900&family=Nunito:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+    :root {
+      --navy:#1B2B5E; --navy-dk:#101D3F; --gold:#F5A623; --gold-dk:#D4891A;
+      --red:#E63329; --green:#16a34a; --white:#fff; --off:#F4F6FB;
+      --light:#EEF1F8; --border:rgba(27,43,94,.1); --tmid:#3D4466; --tmuted:#7A82A8;
+    }
+    html, body { height:100%; overflow:hidden; background:var(--navy-dk); }
+    body { font-family:'Nunito',sans-serif; position:fixed; width:100%; top:0; left:0; }
+
+    /* ── APP SHELL ── */
+    #app {
+      height:100vh; height:-webkit-fill-available;
+      display:flex; flex-direction:column;
+      max-width:480px; margin:0 auto;
+      background:var(--off); overflow:hidden;
+      position:relative;
+    }
+
+    /* ── LOADING ── */
+    #loadScreen {
+      position:fixed; inset:0; background:var(--navy-dk); z-index:999;
+      display:flex; flex-direction:column; align-items:center; justify-content:center; gap:16px;
+    }
+    .load-logo { height:70px; width:auto; object-fit:contain; border-radius:12px; }
+    .load-box  { width:56px; height:56px; border-radius:12px; background:var(--gold); color:var(--navy-dk); font-family:'Barlow Condensed',sans-serif; font-size:.9rem; font-weight:900; display:none; align-items:center; justify-content:center; }
+    .load-spin { width:28px; height:28px; border-radius:50%; border:3px solid rgba(255,255,255,.15); border-top-color:var(--gold); animation:spin .8s linear infinite; }
+    .load-txt  { font-family:'Barlow Condensed',sans-serif; font-size:.8rem; color:rgba(255,255,255,.4); letter-spacing:.1em; text-transform:uppercase; }
+
+    /* ── AUTH ── */
+    #authScreen {
+      position:fixed; inset:0; background:linear-gradient(140deg,var(--navy-dk),var(--navy));
+      display:none; align-items:center; justify-content:center; padding:20px; z-index:100;
+      overflow-y:auto;
+    }
+    .auth-card { background:#fff; border-radius:20px; padding:28px 22px; width:100%; max-width:380px; box-shadow:0 24px 60px rgba(0,0,0,.3); }
+    .auth-logo { text-align:center; margin-bottom:18px; }
+    .auth-logo img { height:60px; width:auto; object-fit:contain; margin:0 auto 10px; display:block; }
+    .auth-logo h2  { font-family:'Barlow Condensed',sans-serif; font-size:1.3rem; font-weight:900; color:var(--navy); text-transform:uppercase; letter-spacing:.04em; }
+    .auth-logo p   { font-size:.74rem; color:var(--tmuted); margin-top:2px; }
+    .auth-tabs { display:flex; background:var(--off); border-radius:10px; padding:3px; margin-bottom:16px; }
+    .auth-tab  { flex:1; padding:9px; text-align:center; border-radius:8px; cursor:pointer; font-family:'Barlow Condensed',sans-serif; font-size:.8rem; font-weight:700; letter-spacing:.05em; text-transform:uppercase; color:var(--tmuted); border:none; background:none; transition:all .2s; }
+    .auth-tab.active { background:#fff; color:var(--navy); box-shadow:0 2px 8px rgba(27,43,94,.1); }
+    .auth-err  { display:none; background:#fef2f2; border:1px solid #fca5a5; border-radius:8px; padding:10px 12px; font-size:.82rem; color:#b91c1c; margin-bottom:12px; line-height:1.5; }
+    .auth-err.show { display:block; }
+    .f-group { margin-bottom:13px; }
+    .f-group label { display:block; font-family:'Barlow Condensed',sans-serif; font-size:.68rem; font-weight:700; letter-spacing:.1em; text-transform:uppercase; color:var(--tmid); margin-bottom:5px; }
+    .f-group input, .f-group select, .f-group textarea {
+      width:100%; padding:11px 13px; border-radius:9px;
+      border:2px solid var(--border); background:var(--off);
+      font-family:'Nunito',sans-serif; font-size:.9rem; color:var(--navy-dk);
+      outline:none; transition:border-color .2s; -webkit-appearance:none; appearance:none;
+    }
+    .f-group input:focus, .f-group select:focus, .f-group textarea:focus { border-color:var(--navy); background:#fff; }
+    .f-group textarea { resize:none; min-height:75px; }
+    .date-row { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+    .btn-full { width:100%; padding:13px; border-radius:100px; border:none; cursor:pointer; font-family:'Barlow Condensed',sans-serif; font-size:.95rem; font-weight:800; letter-spacing:.07em; text-transform:uppercase; transition:all .22s; }
+    .btn-navy  { background:var(--navy); color:#fff; }
+    .btn-gold  { background:var(--gold); color:var(--navy-dk); }
+    .btn-ghost { background:var(--off); color:var(--tmid); border:1px solid var(--border); }
+
+    /* ── NAV ── */
+    .app-nav {
+      height:60px; min-height:60px; background:var(--navy-dk);
+      display:flex; align-items:center; justify-content:space-between;
+      padding:0 14px; flex-shrink:0; z-index:50;
+    }
+    .nav-logo-row { display:flex; align-items:center; gap:8px; }
+    .nav-logo-img { height:34px; width:auto; object-fit:contain; border-radius:6px; }
+    .nav-logo-box { width:34px; height:34px; border-radius:7px; background:var(--gold); color:var(--navy-dk); font-family:'Barlow Condensed',sans-serif; font-size:.62rem; font-weight:900; display:none; align-items:center; justify-content:center; }
+    .nav-title { font-family:'Barlow Condensed',sans-serif; font-size:.95rem; font-weight:800; color:#fff; letter-spacing:.05em; text-transform:uppercase; line-height:1.1; }
+    .nav-sub   { font-size:.5rem; color:var(--gold); font-weight:600; letter-spacing:.07em; text-transform:uppercase; }
+    .nav-btns  { display:flex; gap:4px; }
+    .nav-btn   { background:none; border:none; cursor:pointer; color:rgba(255,255,255,.65); font-size:1.1rem; padding:7px; border-radius:8px; }
+    .nav-btn:active { background:rgba(255,255,255,.08); }
+
+    /* ── SCROLL ── */
+    .app-scroll { flex:1; overflow-y:auto; overflow-x:hidden; -webkit-overflow-scrolling:touch; min-height:0; }
+    .app-scroll::-webkit-scrollbar { display:none; }
+
+    /* ── PAGES ── */
+    .page { display:none; }
+    .page.active { display:block; animation:fadeUp .22s ease; }
+
+    /* ── HOME ── */
+    .hero { background:linear-gradient(135deg,var(--navy-dk),var(--navy)); padding:18px 16px 22px; position:relative; overflow:hidden; }
+    .hero::before { content:''; position:absolute; top:-50px; right:-50px; width:150px; height:150px; border-radius:50%; background:radial-gradient(circle,rgba(245,166,35,.15),transparent 70%); pointer-events:none; }
+    .hero-greet { font-size:.73rem; color:rgba(255,255,255,.48); margin-bottom:2px; }
+    .hero-name  { font-family:'Barlow Condensed',sans-serif; font-size:1.45rem; font-weight:900; color:#fff; letter-spacing:.02em; margin-bottom:12px; }
+    .hero-name span { color:var(--gold); }
+    .search-bar { display:flex; align-items:center; gap:8px; background:rgba(255,255,255,.1); border:1px solid rgba(255,255,255,.13); border-radius:11px; padding:9px 13px; }
+    .search-bar input { flex:1; background:none; border:none; outline:none; font-family:'Nunito',sans-serif; font-size:.87rem; color:#fff; }
+    .search-bar input::placeholder { color:rgba(255,255,255,.37); }
+    .home-stats { display:grid; grid-template-columns:repeat(3,1fr); gap:7px; padding:12px 16px 14px; background:var(--navy-dk); }
+    .hstat { background:rgba(255,255,255,.06); border-radius:9px; padding:10px 8px; text-align:center; border:1px solid rgba(255,255,255,.07); }
+    .hstat-n { font-family:'Barlow Condensed',sans-serif; font-size:1.28rem; font-weight:900; color:var(--gold); line-height:1; }
+    .hstat-l { font-size:.57rem; color:rgba(255,255,255,.42); margin-top:2px; }
+    .section { padding:14px 16px; }
+    .sec-title { font-family:'Barlow Condensed',sans-serif; font-size:.9rem; font-weight:800; color:var(--navy); text-transform:uppercase; letter-spacing:.04em; margin-bottom:11px; display:flex; align-items:center; justify-content:space-between; }
+    .sec-title a { font-size:.68rem; color:var(--gold-dk); text-decoration:none; font-weight:600; }
+
+    /* ── SERVICE CHIPS ── */
+    .svc-scroll { display:flex; gap:9px; overflow-x:auto; padding:0 16px 8px; margin:0 -16px; -webkit-overflow-scrolling:touch; }
+    .svc-scroll::-webkit-scrollbar { display:none; }
+    .svc-chip { flex-shrink:0; background:var(--white); border-radius:13px; padding:13px 11px; border:1px solid var(--border); width:105px; cursor:pointer; transition:all .2s; text-align:center; -webkit-user-select:none; user-select:none; }
+    .svc-chip:active { transform:scale(.95); box-shadow:0 6px 20px rgba(27,43,94,.15); border-color:var(--gold); }
+    .svc-chip-icon { font-size:1.55rem; display:block; margin-bottom:6px; }
+    .svc-chip-name { font-family:'Barlow Condensed',sans-serif; font-size:.7rem; font-weight:800; color:var(--navy); text-transform:uppercase; letter-spacing:.02em; line-height:1.2; }
+    .svc-chip-cat  { font-size:.57rem; color:var(--tmuted); margin-top:2px; }
+
+    /* ── BOOKING CARD ── */
+    .bk-card { background:var(--white); border-radius:14px; border:1px solid var(--border); padding:13px; margin-bottom:9px; }
+    .bk-card-top { display:flex; align-items:center; justify-content:space-between; margin-bottom:7px; gap:8px; }
+    .bk-svc-name { font-family:'Barlow Condensed',sans-serif; font-size:.9rem; font-weight:800; color:var(--navy); text-transform:uppercase; letter-spacing:.02em; }
+    .bk-status { display:inline-flex; align-items:center; padding:3px 9px; border-radius:100px; font-family:'Barlow Condensed',sans-serif; font-size:.62rem; font-weight:700; letter-spacing:.06em; text-transform:uppercase; flex-shrink:0; }
+    .bs-pending  { background:rgba(245,166,35,.15); color:var(--gold-dk); }
+    .bs-active   { background:rgba(22,163,74,.12);  color:var(--green); }
+    .bs-complete { background:rgba(27,43,94,.08);   color:var(--navy); }
+    .bk-meta { font-size:.75rem; color:var(--tmuted); display:flex; gap:10px; flex-wrap:wrap; }
+
+    /* ── CHAT ── */
+    .chat-wrap   { display:flex; flex-direction:column; height:calc(100vh - 120px); }
+    .chat-header { background:var(--navy-dk); padding:10px 14px; display:flex; align-items:center; gap:10px; flex-shrink:0; }
+    .chat-av     { width:34px; height:34px; border-radius:50%; background:var(--gold); color:var(--navy-dk); font-family:'Barlow Condensed',sans-serif; font-weight:900; font-size:.82rem; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+    .chat-aname  { font-family:'Barlow Condensed',sans-serif; font-size:.87rem; font-weight:800; color:#fff; text-transform:uppercase; letter-spacing:.03em; }
+    .chat-asub   { font-size:.6rem; color:rgba(255,255,255,.43); display:flex; align-items:center; gap:4px; margin-top:1px; }
+    .online-dot  { width:6px; height:6px; border-radius:50%; background:#4ade80; display:inline-block; }
+    .chat-msgs   { flex:1; overflow-y:auto; padding:12px 13px; display:flex; flex-direction:column; gap:7px; min-height:0; }
+    .chat-msgs::-webkit-scrollbar { display:none; }
+    .bubble      { max-width:82%; padding:9px 12px; border-radius:14px; font-size:.84rem; line-height:1.55; word-break:break-word; }
+    .bubble.them { background:var(--white); color:var(--navy-dk); border:1px solid var(--border); border-bottom-left-radius:4px; align-self:flex-start; }
+    .bubble.me   { background:var(--navy); color:#fff; border-bottom-right-radius:4px; align-self:flex-end; }
+    .chat-time   { font-size:.59rem; color:var(--tmuted); margin-top:2px; }
+    .qr-row      { display:flex; gap:6px; flex-wrap:wrap; padding:7px 13px 5px; background:var(--white); border-top:1px solid var(--border); }
+    .qr-btn      { background:var(--off); border:1px solid var(--border); border-radius:100px; padding:6px 11px; font-family:'Barlow Condensed',sans-serif; font-size:.68rem; font-weight:700; letter-spacing:.04em; text-transform:uppercase; color:var(--tmid); cursor:pointer; white-space:nowrap; transition:all .2s; }
+    .qr-btn:active { background:var(--navy); color:#fff; border-color:var(--navy); }
+    .chat-input-row { display:flex; gap:8px; align-items:flex-end; padding:9px 12px; background:var(--white); border-top:1px solid var(--border); flex-shrink:0; }
+    .chat-inp { flex:1; background:var(--off); border:1px solid var(--border); border-radius:18px; padding:9px 13px; font-family:'Nunito',sans-serif; font-size:.87rem; outline:none; resize:none; max-height:80px; transition:border-color .2s; line-height:1.4; }
+    .chat-inp:focus { border-color:var(--navy); background:#fff; }
+    .chat-send-btn { width:38px; height:38px; border-radius:50%; background:var(--navy); color:#fff; border:none; cursor:pointer; display:flex; align-items:center; justify-content:center; font-size:.9rem; flex-shrink:0; transition:all .2s; }
+    .chat-send-btn:active { background:var(--gold); color:var(--navy-dk); transform:scale(.93); }
+
+    /* ── PROFILE ── */
+    .prof-hero  { background:linear-gradient(135deg,var(--navy-dk),var(--navy)); padding:26px 16px 20px; text-align:center; }
+    .prof-av    { width:64px; height:64px; border-radius:50%; background:var(--gold); color:var(--navy-dk); font-family:'Barlow Condensed',sans-serif; font-size:1.65rem; font-weight:900; display:flex; align-items:center; justify-content:center; margin:0 auto 10px; border:3px solid rgba(255,255,255,.17); }
+    .prof-name  { font-family:'Barlow Condensed',sans-serif; font-size:1.25rem; font-weight:900; color:#fff; letter-spacing:.03em; text-transform:uppercase; }
+    .prof-email { font-size:.72rem; color:rgba(255,255,255,.46); margin-top:2px; }
+    .prof-menu  { padding:13px; }
+    .menu-item  { display:flex; align-items:center; gap:12px; padding:13px 13px; background:var(--white); border-radius:10px; border:1px solid var(--border); margin-bottom:8px; cursor:pointer; transition:all .2s; text-decoration:none; color:inherit; }
+    .menu-item:active { background:var(--light); transform:scale(.99); }
+    .mi-icon  { font-size:1.05rem; width:22px; text-align:center; flex-shrink:0; }
+    .mi-label { font-size:.87rem; font-weight:600; color:var(--navy-dk); flex:1; }
+    .mi-arrow { color:var(--tmuted); font-size:.78rem; }
+    .menu-item.danger .mi-label { color:var(--red); }
+
+    /* ── TAB BAR ── */
+    .tab-bar { height:60px; min-height:60px; background:var(--white); border-top:1px solid var(--border); display:flex; align-items:stretch; flex-shrink:0; z-index:50; padding-bottom:env(safe-area-inset-bottom,0); }
+    .tab-btn  { flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:2px; border:none; background:none; cursor:pointer; padding:7px 4px; position:relative; transition:all .2s; }
+    .tab-icon { font-size:1.18rem; line-height:1; transition:transform .2s; }
+    .tab-lbl  { font-family:'Barlow Condensed',sans-serif; font-size:.57rem; font-weight:700; letter-spacing:.05em; text-transform:uppercase; color:var(--tmuted); }
+    .tab-btn.active .tab-lbl { color:var(--navy); }
+    .tab-btn.active .tab-icon { transform:scale(1.12); }
+    .tab-btn.active::after { content:''; position:absolute; top:0; left:25%; right:25%; height:3px; background:var(--gold); border-radius:0 0 4px 4px; }
+    .tab-badge { position:absolute; top:5px; right:calc(50% - 18px); background:var(--red); color:#fff; font-size:.52rem; font-weight:700; min-width:15px; height:15px; border-radius:100px; display:flex; align-items:center; justify-content:center; padding:0 3px; border:2px solid #fff; }
+
+    /* ── MODAL ── */
+    .modal-overlay { position:fixed; inset:0; z-index:150; background:rgba(16,29,63,.62); backdrop-filter:blur(5px); display:none; align-items:flex-end; }
+    .modal-overlay.open { display:flex; }
+    .modal-sheet { background:#fff; border-radius:22px 22px 0 0; padding:18px 16px; padding-bottom:calc(18px + env(safe-area-inset-bottom,0)); width:100%; max-height:92vh; overflow-y:auto; animation:slideUp .28s ease; }
+    .modal-sheet::-webkit-scrollbar { display:none; }
+    .modal-handle { width:32px; height:4px; background:var(--border); border-radius:2px; margin:0 auto 14px; }
+    .modal-sheet h3 { font-family:'Barlow Condensed',sans-serif; font-size:1.2rem; font-weight:900; color:var(--navy); text-transform:uppercase; letter-spacing:.03em; margin-bottom:14px; }
+
+    /* ── BOOKING MODAL STEPS ── */
+    .steps-box { background:var(--off); border-radius:10px; padding:11px 13px; margin-bottom:12px; display:none; }
+    .steps-box.show { display:block; }
+    .step-row { display:flex; align-items:center; gap:8px; font-size:.79rem; color:var(--tmuted); padding:3px 0; }
+    .step-row.done   { color:var(--green); }
+    .step-row.active { color:var(--navy); font-weight:600; }
+    .step-dot { width:16px; height:16px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:.6rem; flex-shrink:0; }
+    .step-row.done   .step-dot { background:#dcfce7; color:var(--green); }
+    .step-row.active .step-dot { background:var(--navy); color:#fff; }
+    .step-row.wait   .step-dot { background:var(--light); color:var(--tmuted); }
+    .bk-err { display:none; background:#fef2f2; border:1px solid #fca5a5; border-radius:9px; padding:10px 12px; margin-bottom:12px; font-size:.82rem; color:#b91c1c; line-height:1.5; }
+    .bk-err.show { display:block; }
+
+    /* ── SUCCESS ── */
+    .success-scr { display:none; text-align:center; padding:24px 14px; }
+    .success-scr.show { display:block; animation:fadeUp .3s ease; }
+    .suc-circle { width:70px; height:70px; border-radius:50%; background:#eafaf1; display:flex; align-items:center; justify-content:center; font-size:1.9rem; margin:0 auto 14px; }
+    .success-scr h3 { font-family:'Barlow Condensed',sans-serif; font-size:1.5rem; font-weight:900; color:var(--navy); text-transform:uppercase; letter-spacing:.03em; margin-bottom:8px; }
+    .success-scr p  { font-size:.86rem; color:var(--tmid); line-height:1.7; margin-bottom:16px; }
+    .suc-info { background:var(--off); border-radius:9px; padding:11px; margin-bottom:14px; font-size:.78rem; color:var(--tmid); line-height:1.75; text-align:left; }
+
+    /* ── TOAST ── */
+    .toast { position:fixed; bottom:calc(60px + 12px); left:50%; transform:translateX(-50%); background:var(--navy-dk); color:#fff; border-radius:100px; padding:9px 18px; font-size:.82rem; font-weight:500; white-space:nowrap; box-shadow:0 6px 20px rgba(0,0,0,.25); z-index:300; display:none; max-width:88vw; text-align:center; }
+    .toast.show { display:block; animation:toastUp .28s ease; }
+    .toast.success { background:var(--green); }
+    .toast.error   { background:var(--red); }
+
+    @keyframes fadeUp  { from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:none} }
+    @keyframes slideUp { from{transform:translateY(100%)} to{transform:translateY(0)} }
+    @keyframes toastUp { from{opacity:0;transform:translateX(-50%) translateY(10px)} to{opacity:1;transform:translateX(-50%) translateY(0)} }
+    @keyframes spin    { to{transform:rotate(360deg)} }
+  </style>
 </head>
 <body>
 
-<!-- ══ AUTH ══ -->
-<div class="auth-screen" id="authScreen">
+<!-- LOADING -->
+<div id="loadScreen">
+  <img class="load-logo" src="../images/tehcs.jpg" alt="TEHCS"
+       onerror="this.style.display='none';document.querySelector('.load-box').style.display='flex'">
+  <div class="load-box">TEHCS</div>
+  <div class="load-spin"></div>
+  <p class="load-txt">Loading...</p>
+</div>
+
+<!-- AUTH -->
+<div id="authScreen">
   <div class="auth-card">
     <div class="auth-logo">
-      <img src="../images/tehcs.jpg" class="auth-logo-img" alt="TEHCS"
-           onerror="this.style.display='none';document.querySelector('.auth-logo-fallback').style.display='flex'">
-      <div class="auth-logo-fallback">TEHCS</div>
+      <img src="../images/tehcs.jpg" alt="TEHCS"
+           onerror="this.style.display='none'">
       <h2>TEHCS App</h2>
       <p>Book services &amp; track your requests</p>
     </div>
@@ -28,194 +240,171 @@
       <button class="auth-tab active" onclick="switchAuth('login')"    id="tab-login">Sign In</button>
       <button class="auth-tab"        onclick="switchAuth('register')" id="tab-register">Register</button>
     </div>
-    <div class="auth-error" id="authError"></div>
+    <div class="auth-err" id="authErr"></div>
 
-    <!-- LOGIN -->
     <div id="auth-login">
-      <div class="f-group">
-        <label>Email</label>
-        <input type="email" id="login-email" placeholder="you@example.com" autocomplete="email">
-      </div>
-      <div class="f-group">
-        <label>Password</label>
-        <input type="password" id="login-pwd" placeholder="••••••••" autocomplete="current-password">
-      </div>
-      <button class="btn-full btn-navy" onclick="doLogin()" id="loginBtn">Sign In</button>
-      <p style="text-align:center;margin-top:12px;font-size:.76rem;color:var(--tmuted);">
+      <div class="f-group"><label>Email</label><input type="email" id="li-email" placeholder="you@example.com" autocomplete="email" inputmode="email"></div>
+      <div class="f-group"><label>Password</label><input type="password" id="li-pwd" placeholder="••••••••" autocomplete="current-password"></div>
+      <button class="btn-full btn-navy" id="liBtn" onclick="doLogin()">Sign In</button>
+      <p style="text-align:center;margin-top:11px;font-size:.74rem;color:var(--tmuted);">
         <a href="#" onclick="doReset();return false;" style="color:var(--navy);text-decoration:none;font-weight:600;">Forgot password?</a>
       </p>
     </div>
 
-    <!-- REGISTER -->
     <div id="auth-register" style="display:none">
-      <div class="f-group">
-        <label>Full Name</label>
-        <input type="text" id="reg-name" placeholder="John Mensah" autocomplete="name">
-      </div>
-      <div class="f-group">
-        <label>Email</label>
-        <input type="email" id="reg-email" placeholder="you@example.com" autocomplete="email">
-      </div>
-      <div class="f-group">
-        <label>Phone / WhatsApp</label>
-        <input type="tel" id="reg-phone" placeholder="+233 or +44...">
-      </div>
-      <div class="f-group">
-        <label>Password</label>
-        <input type="password" id="reg-pwd" placeholder="Min. 8 characters" autocomplete="new-password">
-      </div>
-      <button class="btn-full btn-gold" onclick="doRegister()" id="registerBtn">Create Account</button>
+      <div class="f-group"><label>Full Name</label><input type="text" id="rg-name" placeholder="John Mensah" autocomplete="name"></div>
+      <div class="f-group"><label>Email</label><input type="email" id="rg-email" placeholder="you@example.com" autocomplete="email" inputmode="email"></div>
+      <div class="f-group"><label>Phone / WhatsApp</label><input type="tel" id="rg-phone" placeholder="+233 or +44..." inputmode="tel"></div>
+      <div class="f-group"><label>Password</label><input type="password" id="rg-pwd" placeholder="Min. 8 characters" autocomplete="new-password"></div>
+      <button class="btn-full btn-gold" id="rgBtn" onclick="doRegister()">Create Account</button>
     </div>
-    <p style="text-align:center;margin-top:14px;font-size:.7rem;color:var(--tmuted);">🔒 Your data is secure &amp; encrypted</p>
+    <p style="text-align:center;margin-top:13px;font-size:.69rem;color:var(--tmuted);">🔒 Secure &amp; encrypted</p>
   </div>
 </div>
 
-<!-- ══ APP ══ -->
-<div id="app" style="display:none">
+<!-- APP -->
+<div id="app">
 
   <!-- NAV -->
   <div class="app-nav">
-    <div class="app-nav-logo">
-      <img src="../images/tehcs.jpg" class="app-logo-img" alt="TEHCS"
-           onerror="this.style.display='none';document.querySelector('.app-logo-fallback').style.display='flex'">
-      <div class="app-logo-fallback" style="display:none">TEHCS</div>
-      <div style="margin-left:2px;">
-        <div class="app-nav-title">TEHCS</div>
-        <div class="app-nav-sub">Home Care Service</div>
+    <div class="nav-logo-row">
+      <img class="nav-logo-img" src="../images/tehcs.jpg" alt="TEHCS"
+           onerror="this.style.display='none';document.querySelector('.nav-logo-box').style.display='flex'">
+      <div class="nav-logo-box">TEHCS</div>
+      <div style="margin-left:5px;">
+        <div class="nav-title">TEHCS</div>
+        <div class="nav-sub">Home Care Service</div>
       </div>
     </div>
-    <div class="app-nav-right">
-      <button class="app-nav-btn notif-wrap" onclick="showToast('No new notifications','')">🔔</button>
-      <button class="app-nav-btn" onclick="showTab('profile')">👤</button>
+    <div class="nav-btns">
+      <button class="nav-btn" onclick="showToast('No new notifications','')">🔔</button>
+      <button class="nav-btn" onclick="goTab('profile')">👤</button>
     </div>
   </div>
 
   <!-- SCROLL -->
   <div class="app-scroll" id="appScroll">
 
-    <!-- ══ HOME ══ -->
-    <div class="page active" id="page-home">
-      <div class="home-hero">
-        <div class="home-hero-greeting" id="heroGreeting">Good day,</div>
-        <div class="home-hero-name">Welcome, <span id="heroName">there</span> 👋</div>
-        <div class="home-search">
-          <span>🔍</span>
+    <!-- HOME -->
+    <div class="page active" id="pg-home">
+      <div class="hero">
+        <div class="hero-greet" id="heroGreet">Good day,</div>
+        <div class="hero-name">Welcome, <span id="heroName">there</span> 👋</div>
+        <div class="search-bar">
+          <span style="color:rgba(255,255,255,.4);">🔍</span>
           <input type="text" placeholder="Search services..." oninput="filterSvcs(this.value)">
         </div>
       </div>
-
       <div class="home-stats">
-        <div class="home-stat"><div class="home-stat-n" id="statBookings">0</div><div class="home-stat-l">Bookings</div></div>
-        <div class="home-stat"><div class="home-stat-n">3</div><div class="home-stat-l">Categories</div></div>
-        <div class="home-stat"><div class="home-stat-n">24/7</div><div class="home-stat-l">Support</div></div>
+        <div class="hstat"><div class="hstat-n" id="statBk">0</div><div class="hstat-l">Bookings</div></div>
+        <div class="hstat"><div class="hstat-n">3</div><div class="hstat-l">Categories</div></div>
+        <div class="hstat"><div class="hstat-n">24/7</div><div class="hstat-l">Support</div></div>
       </div>
-
       <div class="section">
-        <div class="section-title">Our Services <a href="#" onclick="showTab('book');return false;">All →</a></div>
-        <div class="services-scroll" id="svcsScroll">
-          <div class="svc-chip" data-name="Home Health Care"     onclick="openBook('Home Health Care','🩺')">    <span class="svc-chip-icon">🩺</span><div class="svc-chip-name">Home Health</div><div class="svc-chip-cat">Healthcare</div></div>
-          <div class="svc-chip" data-name="Senior Care"          onclick="openBook('Senior Care','👴')">         <span class="svc-chip-icon">👴</span><div class="svc-chip-name">Senior Care</div><div class="svc-chip-cat">Healthcare</div></div>
-          <div class="svc-chip" data-name="Personal Care"        onclick="openBook('Personal Care','🫶')">       <span class="svc-chip-icon">🫶</span><div class="svc-chip-name">Personal Care</div><div class="svc-chip-cat">Healthcare</div></div>
-          <div class="svc-chip" data-name="Medication Reminders" onclick="openBook('Medication Reminders','💊')"><span class="svc-chip-icon">💊</span><div class="svc-chip-name">Medication</div><div class="svc-chip-cat">Healthcare</div></div>
-          <div class="svc-chip" data-name="Occupational Therapy" onclick="openBook('Occupational Therapy','🦾')"><span class="svc-chip-icon">🦾</span><div class="svc-chip-name">OT Therapy</div><div class="svc-chip-cat">Healthcare</div></div>
-          <div class="svc-chip" data-name="Plumbing"             onclick="openBook('Plumbing','🔧')">            <span class="svc-chip-icon">🔧</span><div class="svc-chip-name">Plumbing</div><div class="svc-chip-cat">Construction</div></div>
-          <div class="svc-chip" data-name="Electrical"           onclick="openBook('Electrical Work','⚡')">     <span class="svc-chip-icon">⚡</span><div class="svc-chip-name">Electrical</div><div class="svc-chip-cat">Construction</div></div>
-          <div class="svc-chip" data-name="Painting"             onclick="openBook('Painting','🖌️')">           <span class="svc-chip-icon">🖌️</span><div class="svc-chip-name">Painting</div><div class="svc-chip-cat">Construction</div></div>
-          <div class="svc-chip" data-name="Interior Decoration"  onclick="openBook('Interior Decoration','🛋️')"><span class="svc-chip-icon">🛋️</span><div class="svc-chip-name">Decoration</div><div class="svc-chip-cat">Construction</div></div>
-          <div class="svc-chip" data-name="Building"             onclick="openBook('Building Construction','🏛️')"><span class="svc-chip-icon">🏛️</span><div class="svc-chip-name">Building</div><div class="svc-chip-cat">Construction</div></div>
-          <div class="svc-chip" data-name="Housekeeping"         onclick="openBook('Housekeeping','🏠')">        <span class="svc-chip-icon">🏠</span><div class="svc-chip-name">Housekeeping</div><div class="svc-chip-cat">Non-Medical</div></div>
-          <div class="svc-chip" data-name="Cook Chef"            onclick="openBook('Cook / Chef','👨‍🍳')">      <span class="svc-chip-icon">👨‍🍳</span><div class="svc-chip-name">Cook / Chef</div><div class="svc-chip-cat">Non-Medical</div></div>
-          <div class="svc-chip" data-name="Nanny"                onclick="openBook('Nanny / Childcare','👶')">   <span class="svc-chip-icon">👶</span><div class="svc-chip-name">Nanny</div><div class="svc-chip-cat">Non-Medical</div></div>
-          <div class="svc-chip" data-name="Driver"               onclick="openBook('Driver','🚗')">              <span class="svc-chip-icon">🚗</span><div class="svc-chip-name">Driver</div><div class="svc-chip-cat">Non-Medical</div></div>
-          <div class="svc-chip" data-name="Laundry"              onclick="openBook('Laundry','🧺')">             <span class="svc-chip-icon">🧺</span><div class="svc-chip-name">Laundry</div><div class="svc-chip-cat">Non-Medical</div></div>
+        <div class="sec-title">Our Services <a href="#" onclick="goTab('bookings');return false;">All →</a></div>
+        <div class="svc-scroll" id="svcScroll">
+          <div class="svc-chip" data-n="Home Health Care"     onclick="openBk('Home Health Care','🩺')">    <span class="svc-chip-icon">🩺</span><div class="svc-chip-name">Home Health</div><div class="svc-chip-cat">Healthcare</div></div>
+          <div class="svc-chip" data-n="Senior Care"          onclick="openBk('Senior Care','👴')">         <span class="svc-chip-icon">👴</span><div class="svc-chip-name">Senior Care</div><div class="svc-chip-cat">Healthcare</div></div>
+          <div class="svc-chip" data-n="Personal Care"        onclick="openBk('Personal Care','🫶')">       <span class="svc-chip-icon">🫶</span><div class="svc-chip-name">Personal Care</div><div class="svc-chip-cat">Healthcare</div></div>
+          <div class="svc-chip" data-n="Medication Reminders" onclick="openBk('Medication Reminders','💊')"><span class="svc-chip-icon">💊</span><div class="svc-chip-name">Medication</div><div class="svc-chip-cat">Healthcare</div></div>
+          <div class="svc-chip" data-n="Companionship"        onclick="openBk('Companionship','🤝')">       <span class="svc-chip-icon">🤝</span><div class="svc-chip-name">Companionship</div><div class="svc-chip-cat">Healthcare</div></div>
+          <div class="svc-chip" data-n="Plumbing"             onclick="openBk('Plumbing','🔧')">            <span class="svc-chip-icon">🔧</span><div class="svc-chip-name">Plumbing</div><div class="svc-chip-cat">Construction</div></div>
+          <div class="svc-chip" data-n="Electrical"           onclick="openBk('Electrical Work','⚡')">     <span class="svc-chip-icon">⚡</span><div class="svc-chip-name">Electrical</div><div class="svc-chip-cat">Construction</div></div>
+          <div class="svc-chip" data-n="Painting"             onclick="openBk('Painting','🖌️')">           <span class="svc-chip-icon">🖌️</span><div class="svc-chip-name">Painting</div><div class="svc-chip-cat">Construction</div></div>
+          <div class="svc-chip" data-n="Building"             onclick="openBk('Building Construction','🏛️')"><span class="svc-chip-icon">🏛️</span><div class="svc-chip-name">Building</div><div class="svc-chip-cat">Construction</div></div>
+          <div class="svc-chip" data-n="Housekeeping"         onclick="openBk('Housekeeping','🏠')">        <span class="svc-chip-icon">🏠</span><div class="svc-chip-name">Housekeeping</div><div class="svc-chip-cat">Non-Medical</div></div>
+          <div class="svc-chip" data-n="Cook Chef"            onclick="openBk('Cook / Chef','👨‍🍳')">      <span class="svc-chip-icon">👨‍🍳</span><div class="svc-chip-name">Cook / Chef</div><div class="svc-chip-cat">Non-Medical</div></div>
+          <div class="svc-chip" data-n="Nanny"                onclick="openBk('Nanny / Childcare','👶')">   <span class="svc-chip-icon">👶</span><div class="svc-chip-name">Nanny</div><div class="svc-chip-cat">Non-Medical</div></div>
+          <div class="svc-chip" data-n="Driver"               onclick="openBk('Driver','🚗')">              <span class="svc-chip-icon">🚗</span><div class="svc-chip-name">Driver</div><div class="svc-chip-cat">Non-Medical</div></div>
+          <div class="svc-chip" data-n="Laundry"              onclick="openBk('Laundry','🧺')">             <span class="svc-chip-icon">🧺</span><div class="svc-chip-name">Laundry</div><div class="svc-chip-cat">Non-Medical</div></div>
         </div>
       </div>
-
       <div class="section" style="padding-top:0">
-        <div class="section-title">Recent Bookings <a href="#" onclick="showTab('bookings');return false;">All →</a></div>
-        <div id="recentBookings">
-          <div style="text-align:center;padding:22px;color:var(--tmuted);font-size:.84rem;font-weight:300;">
-            Tap a service above to book! 👆
-          </div>
+        <div class="sec-title">Recent Bookings <a href="#" onclick="goTab('bookings');return false;">All →</a></div>
+        <div id="recentBk">
+          <p style="text-align:center;padding:20px;color:var(--tmuted);font-size:.83rem;font-weight:300;">Tap a service above to book 👆</p>
         </div>
       </div>
-
-      <div style="margin:0 16px 20px;background:var(--navy-dk);border-radius:var(--r-md);padding:16px;display:flex;align-items:center;justify-content:space-between;gap:8px;">
+      <div style="margin:0 16px 22px;background:var(--navy-dk);border-radius:14px;padding:13px 15px;display:flex;align-items:center;justify-content:space-between;gap:8px;">
         <div>
-          <div style="font-family:'Barlow Condensed',sans-serif;font-size:.9rem;font-weight:800;color:#fff;text-transform:uppercase;letter-spacing:.04em;">Need help?</div>
-          <div style="font-size:.72rem;color:rgba(255,255,255,.42);font-weight:300;margin-top:1px;">Always available</div>
+          <div style="font-family:'Barlow Condensed',sans-serif;font-size:.87rem;font-weight:800;color:#fff;text-transform:uppercase;letter-spacing:.04em;">Need help?</div>
+          <div style="font-size:.68rem;color:rgba(255,255,255,.4);margin-top:1px;">Available 24/7</div>
         </div>
         <div style="display:flex;gap:8px;">
-          <a href="tel:+233240699329" style="width:34px;height:34px;border-radius:50%;background:var(--gold);color:var(--navy-dk);display:flex;align-items:center;justify-content:center;text-decoration:none;font-size:.9rem;">📞</a>
-          <a href="https://wa.me/233240699329" target="_blank" style="width:34px;height:34px;border-radius:50%;background:#25D366;color:#fff;display:flex;align-items:center;justify-content:center;text-decoration:none;font-size:.9rem;">💬</a>
+          <a href="tel:+233240699329" style="width:34px;height:34px;border-radius:50%;background:var(--gold);color:var(--navy-dk);display:flex;align-items:center;justify-content:center;font-size:.9rem;text-decoration:none;">📞</a>
+          <a href="https://wa.me/233240699329" target="_blank" style="width:34px;height:34px;border-radius:50%;background:#25D366;color:#fff;display:flex;align-items:center;justify-content:center;font-size:.9rem;text-decoration:none;">💬</a>
         </div>
       </div>
     </div>
 
-    <!-- ══ BOOKINGS ══ -->
-    <div class="page" id="page-bookings">
+    <!-- BOOKINGS -->
+    <div class="page" id="pg-bookings">
       <div class="section">
-        <div style="display:flex;gap:7px;margin-bottom:14px;overflow-x:auto;padding-bottom:4px;">
-          <button onclick="filterBk('all')"      id="bk-all"      style="flex-shrink:0;padding:7px 14px;border-radius:100px;border:none;cursor:pointer;font-family:'Barlow Condensed',sans-serif;font-size:.72rem;font-weight:800;letter-spacing:.05em;text-transform:uppercase;background:var(--navy);color:#fff;transition:all .2s;">All</button>
-          <button onclick="filterBk('pending')"  id="bk-pending"  style="flex-shrink:0;padding:7px 14px;border-radius:100px;border:1px solid var(--border);cursor:pointer;font-family:'Barlow Condensed',sans-serif;font-size:.72rem;font-weight:800;letter-spacing:.05em;text-transform:uppercase;background:var(--white);color:var(--tmid);transition:all .2s;">Pending</button>
-          <button onclick="filterBk('active')"   id="bk-active"   style="flex-shrink:0;padding:7px 14px;border-radius:100px;border:1px solid var(--border);cursor:pointer;font-family:'Barlow Condensed',sans-serif;font-size:.72rem;font-weight:800;letter-spacing:.05em;text-transform:uppercase;background:var(--white);color:var(--tmid);transition:all .2s;">Active</button>
-          <button onclick="filterBk('complete')" id="bk-complete" style="flex-shrink:0;padding:7px 14px;border-radius:100px;border:1px solid var(--border);cursor:pointer;font-family:'Barlow Condensed',sans-serif;font-size:.72rem;font-weight:800;letter-spacing:.05em;text-transform:uppercase;background:var(--white);color:var(--tmid);transition:all .2s;">Done</button>
+        <div style="display:flex;gap:6px;margin-bottom:13px;overflow-x:auto;padding-bottom:2px;">
+          <button id="bf-all"      onclick="filterBk('all')"      style="flex-shrink:0;padding:7px 15px;border-radius:100px;border:none;background:var(--navy);color:#fff;font-family:'Barlow Condensed',sans-serif;font-size:.7rem;font-weight:800;letter-spacing:.05em;text-transform:uppercase;cursor:pointer;">All</button>
+          <button id="bf-pending"  onclick="filterBk('pending')"  style="flex-shrink:0;padding:7px 15px;border-radius:100px;border:1px solid var(--border);background:var(--white);color:var(--tmid);font-family:'Barlow Condensed',sans-serif;font-size:.7rem;font-weight:800;letter-spacing:.05em;text-transform:uppercase;cursor:pointer;">Pending</button>
+          <button id="bf-active"   onclick="filterBk('active')"   style="flex-shrink:0;padding:7px 15px;border-radius:100px;border:1px solid var(--border);background:var(--white);color:var(--tmid);font-family:'Barlow Condensed',sans-serif;font-size:.7rem;font-weight:800;letter-spacing:.05em;text-transform:uppercase;cursor:pointer;">Active</button>
+          <button id="bf-complete" onclick="filterBk('complete')" style="flex-shrink:0;padding:7px 15px;border-radius:100px;border:1px solid var(--border);background:var(--white);color:var(--tmid);font-family:'Barlow Condensed',sans-serif;font-size:.7rem;font-weight:800;letter-spacing:.05em;text-transform:uppercase;cursor:pointer;">Done</button>
         </div>
-        <div id="allBookings">
-          <div style="text-align:center;padding:40px 16px;color:var(--tmuted);">
-            <div style="font-size:2.4rem;margin-bottom:10px;">📋</div>
-            <div style="font-size:.88rem;font-weight:300;">No bookings yet.</div>
+        <div id="allBk">
+          <div style="text-align:center;padding:38px 16px;color:var(--tmuted);">
+            <div style="font-size:2rem;margin-bottom:8px;">📋</div>
+            <div style="font-size:.84rem;font-weight:300;">No bookings yet.</div>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- ══ CHAT ══ -->
-    <div class="page" id="page-chat">
-      <div class="chat-wrap" style="height:calc(100vh - var(--nav-h) - var(--tab-h));">
+    <!-- CHAT -->
+    <div class="page" id="pg-chat">
+      <div class="chat-wrap">
         <div class="chat-header">
-          <div class="chat-avatar">T</div>
+          <div class="chat-av">T</div>
           <div>
-            <div class="chat-agent-name">TEHCS Support</div>
-            <div class="chat-agent-status"><span class="online-dot"></span> Usually replies within 1 hour</div>
+            <div class="chat-aname">TEHCS Support</div>
+            <div class="chat-asub"><span class="online-dot"></span> Usually replies within 1 hour</div>
           </div>
         </div>
-        <div class="chat-messages" id="chatMessages">
-          <div>
-            <div class="chat-agent-row"><div class="mini-avatar">T</div><div class="mini-name">TEHCS Team</div></div>
-            <div class="chat-bubble them">👋 Hello! Welcome to TEHCS. How can we help you today? You can ask about services, pricing, or book directly through the app!</div>
-            <div class="chat-time chat-them-time">Now</div>
+        <div class="chat-msgs" id="chatMsgs">
+          <div id="welcomeMsg">
+            <div style="display:flex;align-items:center;gap:5px;margin-bottom:4px;">
+              <div style="width:20px;height:20px;border-radius:50%;background:var(--gold);color:var(--navy-dk);font-family:'Barlow Condensed',sans-serif;font-size:.55rem;font-weight:900;display:flex;align-items:center;justify-content:center;">T</div>
+              <span style="font-size:.66rem;font-weight:600;color:var(--tmid);">TEHCS Team</span>
+            </div>
+            <div class="bubble them">👋 Hello! Welcome to TEHCS. How can we help you today? Ask about services, pricing, or book directly through the app!</div>
+            <div class="chat-time">Now</div>
           </div>
         </div>
-        <div class="quick-replies">
-          <button class="quick-reply" onclick="qReply(this)">Book a service</button>
-          <button class="quick-reply" onclick="qReply(this)">Pricing info</button>
-          <button class="quick-reply" onclick="qReply(this)">Track booking</button>
-          <button class="quick-reply" onclick="qReply(this)">Contact TEHCS</button>
+        <div class="qr-row">
+          <button class="qr-btn" onclick="sendQR('I want to book a service')">Book a service</button>
+          <button class="qr-btn" onclick="sendQR('What are your prices?')">Pricing</button>
+          <button class="qr-btn" onclick="sendQR('Track my booking')">Track booking</button>
+          <button class="qr-btn" onclick="sendQR('Contact information please')">Contact info</button>
         </div>
-        <div class="chat-input-bar">
-          <textarea class="chat-input" id="chatInput" placeholder="Type a message..." rows="1" onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendMsg();}"></textarea>
-          <button class="chat-send" onclick="sendMsg()">➤</button>
+        <div class="chat-input-row">
+          <textarea class="chat-inp" id="chatInp" placeholder="Type a message..." rows="1"
+            onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendMsg();}"
+            oninput="this.style.height='auto';this.style.height=Math.min(this.scrollHeight,78)+'px'"></textarea>
+          <button class="chat-send-btn" onclick="sendMsg()">➤</button>
         </div>
       </div>
     </div>
 
-    <!-- ══ PROFILE ══ -->
-    <div class="page" id="page-profile">
-      <div class="profile-hero">
-        <div class="profile-avatar" id="profAvatar">U</div>
-        <div class="profile-name"  id="profName">User</div>
-        <div class="profile-email" id="profEmail"></div>
+    <!-- PROFILE -->
+    <div class="page" id="pg-profile">
+      <div class="prof-hero">
+        <div class="prof-av" id="profAv">U</div>
+        <div class="prof-name" id="profName">User</div>
+        <div class="prof-email" id="profEmail"></div>
       </div>
-      <div class="profile-menu">
-        <div class="menu-item" onclick="showTab('bookings')"><span class="menu-icon">📋</span><span class="menu-label">My Bookings</span><span class="menu-arrow">›</span></div>
-        <div class="menu-item" onclick="showTab('chat')"><span class="menu-icon">💬</span><span class="menu-label">Chat with TEHCS</span><span class="menu-arrow">›</span></div>
-        <a href="tel:+233240699329" class="menu-item"><span class="menu-icon">📞</span><span class="menu-label">Call Ghana (+233 240 699 329)</span><span class="menu-arrow">›</span></a>
-        <a href="tel:+447448468070" class="menu-item"><span class="menu-icon">📞</span><span class="menu-label">Call UK (+44 7448 468070)</span><span class="menu-arrow">›</span></a>
-        <a href="mailto:twitchempireinfo@gmail.com" class="menu-item"><span class="menu-icon">✉️</span><span class="menu-label">twitchempireinfo@gmail.com</span><span class="menu-arrow">›</span></a>
-        <a href="https://tehcs.com" target="_blank" class="menu-item"><span class="menu-icon">🌐</span><span class="menu-label">Visit tehcs.com</span><span class="menu-arrow">›</span></a>
-        <div class="menu-item" onclick="doShare()"><span class="menu-icon">📤</span><span class="menu-label">Share App</span><span class="menu-arrow">›</span></div>
-        <div class="menu-item danger" onclick="doSignOut()"><span class="menu-icon">🚪</span><span class="menu-label">Sign Out</span><span class="menu-arrow">›</span></div>
+      <div class="prof-menu">
+        <div class="menu-item" onclick="goTab('bookings')">  <span class="mi-icon">📋</span><span class="mi-label">My Bookings</span><span class="mi-arrow">›</span></div>
+        <div class="menu-item" onclick="goTab('chat')">      <span class="mi-icon">💬</span><span class="mi-label">Chat with TEHCS</span><span class="mi-arrow">›</span></div>
+        <a href="tel:+233240699329"                 class="menu-item"><span class="mi-icon">📞</span><span class="mi-label">Call Ghana (+233 240 699 329)</span><span class="mi-arrow">›</span></a>
+        <a href="tel:+447448468070"                 class="menu-item"><span class="mi-icon">📞</span><span class="mi-label">Call UK (+44 7448 468070)</span><span class="mi-arrow">›</span></a>
+        <a href="mailto:twitchempireinfo@gmail.com" class="menu-item"><span class="mi-icon">✉️</span><span class="mi-label">twitchempireinfo@gmail.com</span><span class="mi-arrow">›</span></a>
+        <a href="https://tehcs.com" target="_blank" class="menu-item"><span class="mi-icon">🌐</span><span class="mi-label">Visit tehcs.com</span><span class="mi-arrow">›</span></a>
+        <div class="menu-item danger" onclick="doSignOut()">  <span class="mi-icon">🚪</span><span class="mi-label">Sign Out</span><span class="mi-arrow">›</span></div>
       </div>
     </div>
 
@@ -223,41 +412,75 @@
 
   <!-- TAB BAR -->
   <div class="tab-bar">
-    <button class="tab-item active" id="tab-home"     onclick="showTab('home')">    <span class="tab-icon">🏠</span><span class="tab-label">Home</span></button>
-    <button class="tab-item"        id="tab-book"     onclick="showTab('book')">    <span class="tab-icon">➕</span><span class="tab-label">Book</span></button>
-    <button class="tab-item"        id="tab-bookings" onclick="showTab('bookings')"><span class="tab-icon">📋</span><span class="tab-label">Bookings</span><span class="tab-badge" id="bkBadge" style="display:none">0</span></button>
-    <button class="tab-item"        id="tab-chat"     onclick="showTab('chat')">    <span class="tab-icon">💬</span><span class="tab-label">Chat</span></button>
-    <button class="tab-item"        id="tab-profile"  onclick="showTab('profile')"> <span class="tab-icon">👤</span><span class="tab-label">Profile</span></button>
+    <button class="tab-btn active" id="tb-home"     onclick="goTab('home')">     <span class="tab-icon">🏠</span><span class="tab-lbl">Home</span></button>
+    <button class="tab-btn"        id="tb-book"     onclick="openBk('','')">     <span class="tab-icon">➕</span><span class="tab-lbl">Book</span></button>
+    <button class="tab-btn"        id="tb-bookings" onclick="goTab('bookings')"> <span class="tab-icon">📋</span><span class="tab-lbl">Bookings</span><span class="tab-badge" id="bkBadge" style="display:none">0</span></button>
+    <button class="tab-btn"        id="tb-chat"     onclick="goTab('chat')">     <span class="tab-icon">💬</span><span class="tab-lbl">Chat</span></button>
+    <button class="tab-btn"        id="tb-profile"  onclick="goTab('profile')">  <span class="tab-icon">👤</span><span class="tab-lbl">Profile</span></button>
   </div>
 
 </div><!-- /app -->
 
-<!-- ══ BOOK MODAL ══ -->
-<div class="modal-overlay" id="bookModal" onclick="if(event.target===this)closeBook()">
+<!-- BOOK MODAL -->
+<div class="modal-overlay" id="bkModal">
   <div class="modal-sheet">
     <div class="modal-handle"></div>
-    <h3 id="bookTitle">Book a Service</h3>
-    <div id="bookFormWrap">
-      <div class="f-group">
-        <label>Service</label>
-        <input type="text" id="bk-service" readonly style="background:var(--light);color:var(--tmid);">
+    <h3 id="bkModalTitle">Book a Service</h3>
+
+    <div id="bkForm">
+      <!-- Service select shown when opened from + button -->
+      <div class="f-group" id="svcSelectWrap" style="display:none">
+        <label>Service *</label>
+        <select id="bk-svc-sel">
+          <option value="" disabled selected>Choose a service...</option>
+          <optgroup label="🩺 Home Health Care">
+            <option>Home Health Care</option><option>Senior Care</option>
+            <option>Personal Care</option><option>Medication Reminders</option>
+            <option>Occupational Therapy</option><option>Companionship</option>
+          </optgroup>
+          <optgroup label="🏗️ Construction">
+            <option>Plumbing</option><option>Electrical Work</option>
+            <option>Painting</option><option>Interior Decoration</option>
+            <option>Building Construction</option><option>Gardening</option>
+          </optgroup>
+          <optgroup label="🏡 Non-Medical">
+            <option>Housekeeping</option><option>Cook / Chef</option>
+            <option>Nanny / Childcare</option><option>Driver</option>
+            <option>Laundry</option><option>Office Cleaning</option>
+          </optgroup>
+        </select>
       </div>
+      <!-- Service display shown when opened from chip -->
+      <div class="f-group" id="svcDisplayWrap">
+        <label>Service</label>
+        <input type="text" id="bk-svc-disp" readonly style="background:var(--light);color:var(--tmid);">
+      </div>
+
       <div class="date-row">
         <div class="f-group"><label>Date *</label><input type="date" id="bk-date"></div>
-        <div class="f-group"><label>Time *</label><input type="time" id="bk-time"></div>
+        <div class="f-group"><label>Time</label><input type="time" id="bk-time"></div>
       </div>
-      <div class="f-group"><label>Address / Location *</label><input type="text" id="bk-address" placeholder="Your home address"></div>
+      <div class="f-group"><label>Address *</label><input type="text" id="bk-addr" placeholder="Your home or work address"></div>
+      <div class="f-group"><label>Phone / WhatsApp *</label><input type="tel" id="bk-phone" placeholder="+233 or +44..." inputmode="tel"></div>
       <div class="f-group"><label>Notes (optional)</label><textarea id="bk-notes" placeholder="Any specific details..."></textarea></div>
-      <div style="background:rgba(245,166,35,.1);border:1px solid rgba(245,166,35,.2);border-radius:9px;padding:11px 13px;margin-bottom:14px;font-size:.8rem;color:var(--tmid);line-height:1.6;">
-        📞 We'll contact you within <strong>24 hours</strong> to confirm your booking.
+
+      <div class="steps-box" id="stepsBox">
+        <div class="step-row wait" id="s1"><div class="step-dot">1</div> Saving booking...</div>
+        <div class="step-row wait" id="s2"><div class="step-dot">2</div> Notifying TEHCS...</div>
+        <div class="step-row wait" id="s3"><div class="step-dot">3</div> Sending confirmation...</div>
       </div>
-      <button class="btn-full btn-navy" onclick="submitBook()" id="bookSubmitBtn">Confirm Booking</button>
+      <div class="bk-err" id="bkErr"></div>
+
+      <button class="btn-full btn-navy" id="bkSubmitBtn" onclick="submitBk()">Confirm Booking</button>
+      <button class="btn-full btn-ghost" onclick="closeBk()" style="margin-top:8px;">Cancel</button>
     </div>
-    <div class="success-screen" id="bookSuccess">
-      <div class="success-circle">✅</div>
+
+    <div class="success-scr" id="bkSuccess">
+      <div class="suc-circle">✅</div>
       <h3>Booking Sent!</h3>
-      <p>Your request has been received. TEHCS will contact you within 24 hours to confirm.</p>
-      <button class="btn-full btn-gold" onclick="closeBook()">Done</button>
+      <p>Your request has been received. TEHCS will contact you within <strong>24 hours</strong> to confirm.</p>
+      <div class="suc-info">📧 Confirmation email sent<br>📋 Saved to your bookings<br>📞 We'll call or WhatsApp you soon</div>
+      <button class="btn-full btn-gold" onclick="closeBk()">Done</button>
     </div>
   </div>
 </div>
@@ -265,22 +488,13 @@
 <!-- TOAST -->
 <div class="toast" id="toast"></div>
 
-<!-- INSTALL BANNER -->
-<div class="install-banner" id="installBanner">
-  <span style="font-size:1.3rem;">📱</span>
-  <div class="install-banner-text"><strong>Install TEHCS App</strong><span>Add to home screen</span></div>
-  <button class="install-banner-btn" onclick="doInstall()">Install</button>
-  <button class="install-close" onclick="document.getElementById('installBanner').classList.remove('show')">✕</button>
-</div>
-
 <!-- EmailJS -->
 <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
 
-<!-- Firebase -->
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-app.js";
 import { getAuth, onAuthStateChanged, signInWithEmailAndPassword,
-  createUserWithEmailAndPassword, signOut as fbSignOut,
+  createUserWithEmailAndPassword, signOut as fbOut,
   updateProfile, sendPasswordResetEmail }
   from "https://www.gstatic.com/firebasejs/12.13.0/firebase-auth.js";
 import { getFirestore, collection, addDoc, query, where,
@@ -295,306 +509,338 @@ const FB = {
   messagingSenderId:"428200196151",
   appId:"1:428200196151:web:2dee682eda618b2ac7e7b2"
 };
-const EMAILJS = {
-  KEY: 'L79E9hHNieJbHYZL0',
-  SVC: 'service_g0m8tdi',
-  TPL_BUSINESS: 'template_kswcorr',
-  TPL_CLIENT:   'template_zljgoy6',
-};
+const EJ = { KEY:'L79E9hHNieJbHYZL0', SVC:'service_g0m8tdi', BIZ:'template_kswcorr', CLT:'template_zljgoy6' };
 
-const app  = initializeApp(FB);
-const auth = getAuth(app);
-const db   = getFirestore(app);
-emailjs.init(EMAILJS.KEY);
+const fbApp = initializeApp(FB);
+const auth  = getAuth(fbApp);
+const db    = getFirestore(fbApp);
+emailjs.init(EJ.KEY);
 
 let currentUser = null;
-let allBookings = [];
+let allBk = [];
+let bkIcon = '🔧';
 
-/* ── GREETING ── */
-function greeting() {
-  const h = new Date().getHours();
-  return h < 12 ? 'Good morning,' : h < 17 ? 'Good afternoon,' : 'Good evening,';
-}
+/* ── UTILS ── */
+function greet() { const h=new Date().getHours(); return h<12?'Good morning,':h<17?'Good afternoon,':'Good evening,'; }
+function esc(s)  { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+function fmtT(ts){ try{ const d=ts?.toDate?ts.toDate():new Date(ts); return d.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'}); }catch(e){return '';} }
+
+window.showToast = function(msg, type='') {
+  const t=document.getElementById('toast');
+  t.textContent=msg; t.className='toast show '+type;
+  setTimeout(()=>t.classList.remove('show'),3000);
+};
 
 /* ── AUTH STATE ── */
 onAuthStateChanged(auth, user => {
+  document.getElementById('loadScreen').style.display='none';
   if (user) {
-    currentUser = user;
-    document.getElementById('authScreen').style.display = 'none';
-    document.getElementById('app').style.display = 'flex';
+    currentUser=user;
+    document.getElementById('authScreen').style.display='none';
+    document.getElementById('app').style.display='flex';
     const name = user.displayName || user.email.split('@')[0];
-    document.getElementById('heroGreeting').textContent  = greeting();
-    document.getElementById('heroName').textContent      = name.split(' ')[0];
-    document.getElementById('profName').textContent      = name;
-    document.getElementById('profEmail').textContent     = user.email;
-    document.getElementById('profAvatar').textContent    = name[0].toUpperCase();
-    loadBookings();
-    listenChat();
+    document.getElementById('heroGreet').textContent  = greet();
+    document.getElementById('heroName').textContent   = name.split(' ')[0];
+    document.getElementById('profName').textContent   = name;
+    document.getElementById('profEmail').textContent  = user.email;
+    document.getElementById('profAv').textContent     = name[0].toUpperCase();
+    loadBk(); listenChat();
   } else {
-    currentUser = null;
-    document.getElementById('authScreen').style.display = 'flex';
-    document.getElementById('app').style.display = 'none';
+    currentUser=null;
+    document.getElementById('authScreen').style.display='flex';
+    document.getElementById('app').style.display='none';
   }
 });
 
-/* ── AUTH ── */
+/* ══ AUTH ══ */
 window.doLogin = async function() {
-  const email = document.getElementById('login-email').value.trim();
-  const pwd   = document.getElementById('login-pwd').value;
-  const btn   = document.getElementById('loginBtn');
-  if (!email||!pwd) { authErr('Please enter email and password.'); return; }
+  const email=document.getElementById('li-email').value.trim();
+  const pwd  =document.getElementById('li-pwd').value;
+  const btn  =document.getElementById('liBtn');
+  if(!email||!pwd){authErr('Enter your email and password.');return;}
   btn.textContent='Signing in...'; btn.disabled=true;
-  try { await signInWithEmailAndPassword(auth,email,pwd); }
-  catch(e) {
-    authErr({'auth/invalid-credential':'Wrong email or password.','auth/too-many-requests':'Too many attempts. Wait a moment.'}[e.code]||'Login failed.');
+  try{ await signInWithEmailAndPassword(auth,email,pwd); }
+  catch(e){
+    authErr({'auth/invalid-credential':'Wrong email or password.','auth/too-many-requests':'Too many attempts. Wait a moment.','auth/user-not-found':'No account with this email.'}[e.code]||'Login failed: '+e.message);
     btn.textContent='Sign In'; btn.disabled=false;
   }
 };
 
 window.doRegister = async function() {
-  const name  = document.getElementById('reg-name').value.trim();
-  const email = document.getElementById('reg-email').value.trim();
-  const phone = document.getElementById('reg-phone').value.trim();
-  const pwd   = document.getElementById('reg-pwd').value;
-  const btn   = document.getElementById('registerBtn');
-  if (!name||!email||!pwd) { authErr('Please fill in all fields.'); return; }
-  if (pwd.length<8) { authErr('Password must be at least 8 characters.'); return; }
+  const name =document.getElementById('rg-name').value.trim();
+  const email=document.getElementById('rg-email').value.trim();
+  const phone=document.getElementById('rg-phone').value.trim();
+  const pwd  =document.getElementById('rg-pwd').value;
+  const btn  =document.getElementById('rgBtn');
+  if(!name||!email||!pwd){authErr('Please fill in all fields.');return;}
+  if(pwd.length<8){authErr('Password needs at least 8 characters.');return;}
   btn.textContent='Creating...'; btn.disabled=true;
-  try {
-    const cred = await createUserWithEmailAndPassword(auth,email,pwd);
+  try{
+    const cred=await createUserWithEmailAndPassword(auth,email,pwd);
     await updateProfile(cred.user,{displayName:name});
     await addDoc(collection(db,'clients'),{uid:cred.user.uid,name,email,phone,createdAt:serverTimestamp()});
-  } catch(e) {
-    authErr({'auth/email-already-in-use':'Email already registered.','auth/weak-password':'Password too weak.'}[e.code]||'Registration failed.');
+  }catch(e){
+    authErr({'auth/email-already-in-use':'Email already registered.','auth/weak-password':'Password too weak.','auth/invalid-email':'Invalid email.'}[e.code]||'Registration failed: '+e.message);
     btn.textContent='Create Account'; btn.disabled=false;
   }
 };
 
-window.doSignOut = async function() {
-  if (!confirm('Sign out?')) return;
-  await fbSignOut(auth);
-};
+window.doSignOut = async function() { if(!confirm('Sign out?'))return; await fbOut(auth); };
 
 window.doReset = async function() {
-  const email = document.getElementById('login-email').value.trim();
-  if (!email) { authErr('Enter your email first.'); return; }
-  await sendPasswordResetEmail(auth,email);
-  const el=document.getElementById('authError');
-  el.textContent='✅ Reset link sent to '+email;
-  el.style.cssText='display:block;background:#f0fdf4;border-color:#86efac;color:#15803d;';
+  const email=document.getElementById('li-email').value.trim();
+  if(!email){authErr('Enter your email first.');return;}
+  try{
+    await sendPasswordResetEmail(auth,email);
+    const el=document.getElementById('authErr');
+    el.textContent='✅ Reset link sent to '+email;
+    el.style.cssText='display:block;background:#f0fdf4;border:1px solid #86efac;color:#15803d;border-radius:8px;padding:10px 12px;font-size:.82px;margin-bottom:12px;';
+  }catch(e){authErr('Could not send reset email.');}
 };
 
 window.switchAuth = function(t) {
-  document.getElementById('auth-login').style.display    = t==='login'    ? 'block':'none';
-  document.getElementById('auth-register').style.display = t==='register' ? 'block':'none';
-  document.getElementById('tab-login').classList.toggle('active',    t==='login');
-  document.getElementById('tab-register').classList.toggle('active', t==='register');
-  document.getElementById('authError').className='auth-error';
+  document.getElementById('auth-login').style.display   =t==='login'   ?'block':'none';
+  document.getElementById('auth-register').style.display=t==='register'?'block':'none';
+  document.getElementById('tab-login').classList.toggle('active',   t==='login');
+  document.getElementById('tab-register').classList.toggle('active',t==='register');
+  const el=document.getElementById('authErr'); el.className='auth-err'; el.style.cssText='';
 };
 
-function authErr(msg) {
-  const el=document.getElementById('authError');
-  el.textContent=msg; el.classList.add('show');
+function authErr(msg){
+  const el=document.getElementById('authErr');
+  el.textContent=msg; el.style.cssText=''; el.classList.add('show');
 }
 
-/* ── BOOKINGS ── */
-function loadBookings() {
-  if (!currentUser) return;
-  const q = query(collection(db,'bookings'),where('uid','==',currentUser.uid),orderBy('createdAt','desc'));
-  onSnapshot(q, snap => {
-    allBookings = snap.docs.map(d=>({id:d.id,...d.data()}));
-    document.getElementById('statBookings').textContent = allBookings.length;
-    renderBk(allBookings,'recentBookings',3);
-    renderBk(allBookings,'allBookings');
-    const pend = allBookings.filter(b=>b.status==='pending'||b.status==='new').length;
-    const badge = document.getElementById('bkBadge');
+/* ══ BOOKINGS ══ */
+function loadBk(){
+  if(!currentUser)return;
+  const q=query(collection(db,'bookings'),where('uid','==',currentUser.uid),orderBy('createdAt','desc'));
+  onSnapshot(q, snap=>{
+    allBk=snap.docs.map(d=>({id:d.id,...d.data()}));
+    document.getElementById('statBk').textContent=allBk.length;
+    renderBk(allBk,'recentBk',3);
+    renderBk(allBk,'allBk');
+    const pend=allBk.filter(b=>!b.status||b.status==='pending'||b.status==='new').length;
+    const badge=document.getElementById('bkBadge');
     badge.textContent=pend; badge.style.display=pend?'flex':'none';
-  });
+  }, err=>console.error('Booking listener error:',err.code,err.message));
 }
 
-function renderBk(list, id, max) {
-  const el = document.getElementById(id);
-  const items = max ? list.slice(0,max) : list;
-  if (!items.length) {
-    el.innerHTML='<div style="text-align:center;padding:28px 16px;color:var(--tmuted);"><div style="font-size:2rem;margin-bottom:8px;">📋</div><div style="font-size:.85rem;font-weight:300;">No bookings yet.</div></div>';
+function renderBk(list,id,max){
+  const el=document.getElementById(id);
+  const items=max?list.slice(0,max):list;
+  if(!items.length){
+    el.innerHTML='<div style="text-align:center;padding:28px 16px;color:var(--tmuted);"><div style="font-size:1.9rem;margin-bottom:7px;">📋</div><div style="font-size:.83rem;font-weight:300;">No bookings yet.</div></div>';
     return;
   }
   el.innerHTML=items.map(b=>`
-    <div class="booking-card">
-      <div class="booking-card-top">
-        <div class="booking-card-service">${b.icon||'🔧'} ${b.service}</div>
-        <span class="booking-status bs-${b.status||'pending'}">${b.status||'pending'}</span>
+    <div class="bk-card">
+      <div class="bk-card-top">
+        <div class="bk-svc-name">${b.icon||'🔧'} ${b.service||'Service'}</div>
+        <span class="bk-status bs-${b.status||'pending'}">${b.status||'pending'}</span>
       </div>
-      <div class="booking-card-meta">
+      <div class="bk-meta">
         <span>📅 ${b.date||'TBD'}</span>
-        <span>⏰ ${b.time||'TBD'}</span>
+        <span>⏰ ${b.time||'Flexible'}</span>
+        ${b.address?`<span>📍 ${b.address.slice(0,20)}...</span>`:''}
       </div>
-      ${b.status==='active'?'<div class="booking-progress"><div class="progress-bar"><div class="progress-fill" style="width:60%"></div></div></div>':''}
     </div>`).join('');
 }
 
-window.filterBk = function(s) {
-  ['all','pending','active','complete'].forEach(k => {
-    const el=document.getElementById('bk-'+k);
-    el.style.background=k===s?'var(--navy)':'var(--white)';
-    el.style.color=k===s?'#fff':'var(--tmid)';
-    el.style.border=k===s?'none':'1px solid var(--border)';
+window.filterBk=function(s){
+  ['all','pending','active','complete'].forEach(k=>{
+    const el=document.getElementById('bf-'+k); if(!el)return;
+    const on=k===s;
+    el.style.background=on?'var(--navy)':'var(--white)';
+    el.style.color=on?'#fff':'var(--tmid)';
+    el.style.border=on?'none':'1px solid var(--border)';
   });
-  renderBk(s==='all'?allBookings:allBookings.filter(b=>(b.status||'pending')===s),'allBookings');
+  renderBk(s==='all'?allBk:allBk.filter(b=>(b.status||'pending')===s),'allBk');
 };
 
-/* ── BOOK MODAL ── */
-window.openBook = function(svc,icon) {
-  document.getElementById('bk-service').value=svc;
-  document.getElementById('bookTitle').textContent=icon+' Book: '+svc;
-  document.getElementById('bookFormWrap').style.display='block';
-  document.getElementById('bookSuccess').classList.remove('show');
+/* ══ BOOK MODAL ══ */
+window.openBk=function(svc,icon){
+  // Reset
+  document.getElementById('bkForm').style.display='block';
+  document.getElementById('bkSuccess').classList.remove('show');
+  document.getElementById('bkErr').classList.remove('show');
+  document.getElementById('stepsBox').classList.remove('show');
+  ['s1','s2','s3'].forEach(id=>setStep(id,'wait'));
+  document.getElementById('bkSubmitBtn').textContent='Confirm Booking';
+  document.getElementById('bkSubmitBtn').disabled=false;
+
+  if(svc){
+    document.getElementById('svcDisplayWrap').style.display='block';
+    document.getElementById('svcSelectWrap').style.display='none';
+    document.getElementById('bk-svc-disp').value=svc;
+    document.getElementById('bkModalTitle').textContent=icon+' Book: '+svc;
+    bkIcon=icon;
+  } else {
+    document.getElementById('svcDisplayWrap').style.display='none';
+    document.getElementById('svcSelectWrap').style.display='block';
+    document.getElementById('bk-svc-sel').value='';
+    document.getElementById('bkModalTitle').textContent='➕ Book a Service';
+    bkIcon='🔧';
+  }
+
   document.getElementById('bk-date').min=new Date().toISOString().split('T')[0];
-  document.getElementById('bookModal').classList.add('open');
-  window._bookIcon=icon;
+  // Pre-fill phone
+  const savedPhone=currentUser?localStorage.getItem('tehcs_ph_'+currentUser.uid):'';
+  if(savedPhone) document.getElementById('bk-phone').value=savedPhone;
+
+  document.getElementById('bkModal').classList.add('open');
 };
-window.closeBook=()=>document.getElementById('bookModal').classList.remove('open');
 
-window.submitBook = async function() {
-  const date    = document.getElementById('bk-date').value;
-  const time    = document.getElementById('bk-time').value;
-  const address = document.getElementById('bk-address').value.trim();
-  const service = document.getElementById('bk-service').value;
-  const notes   = document.getElementById('bk-notes').value.trim();
-  const btn     = document.getElementById('bookSubmitBtn');
+window.closeBk=function(){
+  document.getElementById('bkModal').classList.remove('open');
+};
 
-  if (!date||!address) { showToast('Please fill in date and address','error'); return; }
+// Close on backdrop tap
+document.getElementById('bkModal').addEventListener('click',function(e){if(e.target===this)closeBk();});
+
+window.submitBk=async function(){
+  if(!currentUser){showToast('Please sign in first','error');return;}
+
+  let svc=document.getElementById('bk-svc-disp').value;
+  if(!svc) svc=document.getElementById('bk-svc-sel').value;
+  const date =document.getElementById('bk-date').value;
+  const time =document.getElementById('bk-time').value;
+  const addr =document.getElementById('bk-addr').value.trim();
+  const phone=document.getElementById('bk-phone').value.trim();
+  const notes=document.getElementById('bk-notes').value.trim();
+  const btn  =document.getElementById('bkSubmitBtn');
+  const errEl=document.getElementById('bkErr');
+
+  errEl.classList.remove('show');
+  if(!svc)   {showBkErr('Please select a service.');return;}
+  if(!date)  {showBkErr('Please choose a date.');return;}
+  if(!addr)  {showBkErr('Please enter your address.');return;}
+  if(!phone) {showBkErr('Please enter your phone number.');return;}
 
   btn.textContent='⏳ Submitting...'; btn.disabled=true;
+  document.getElementById('stepsBox').classList.add('show');
+  setStep('s1','active');
 
-  try {
-    const name  = currentUser.displayName || currentUser.email;
-    const email = currentUser.email;
-    const ts    = new Date().toLocaleString('en-GB',{timeZone:'Africa/Accra'});
+  const cName =currentUser.displayName||currentUser.email.split('@')[0];
+  const cEmail=currentUser.email;
+  const ts    =new Date().toLocaleString('en-GB',{timeZone:'Africa/Accra'});
 
-    /* 1. Save to Firestore */
+  try{
+    /* 1. Firestore */
     await addDoc(collection(db,'bookings'),{
-      uid:currentUser.uid, clientName:name, clientEmail:email,
-      service, icon:window._bookIcon||'🔧',
-      date, time, address, notes, status:'pending',
-      createdAt:serverTimestamp()
+      uid:currentUser.uid, clientName:cName, clientEmail:cEmail,
+      phone, service:svc, icon:bkIcon,
+      date, time:time||'Flexible', address:addr, notes:notes||'',
+      status:'pending', createdAt:serverTimestamp()
     });
+    setStep('s1','done'); setStep('s2','active');
 
-    /* 2. Email to TEHCS admin */
-    await emailjs.send(EMAILJS.SVC, EMAILJS.TPL_BUSINESS, {
-      from_name:  name,
-      from_email: email,
-      phone:      'Via App',
-      country:    'Via App',
-      service,
-      message:    `NEW APP BOOKING\nService: ${service}\nDate: ${date}\nTime: ${time}\nAddress: ${address}\nNotes: ${notes||'None'}`,
-      timestamp:  ts,
-      reply_to:   email,
+    /* 2. Email to TEHCS */
+    await emailjs.send(EJ.SVC,EJ.BIZ,{
+      from_name:cName, from_email:cEmail, phone,
+      country:'Via TEHCS App', service:svc,
+      message:`🔖 NEW APP BOOKING\nService: ${svc}\nDate: ${date}\nTime: ${time||'Flexible'}\nAddress: ${addr}\nPhone: ${phone}\nNotes: ${notes||'None'}`,
+      timestamp:ts, reply_to:cEmail
     });
+    setStep('s2','done'); setStep('s3','active');
 
-    /* 3. Confirmation email to client */
-    await emailjs.send(EMAILJS.SVC, EMAILJS.TPL_CLIENT, {
-      from_name:  name,
-      from_email: email,
-      service,
-      message:    `Your booking for ${service} on ${date} at ${time} has been received. We will contact you within 24 hours to confirm.`,
-      timestamp:  ts,
-      reply_to:   'twitchempireinfo@gmail.com',
+    /* 3. Confirmation to client */
+    await emailjs.send(EJ.SVC,EJ.CLT,{
+      from_name:cName, from_email:cEmail, phone, service:svc,
+      message:`Your booking for "${svc}" on ${date}${time?' at '+time:''} has been received. We will contact you on ${phone} within 24 hours.\n\nAddress: ${addr}`,
+      timestamp:ts, reply_to:'twitchempireinfo@gmail.com'
     });
+    setStep('s3','done');
 
-    document.getElementById('bookFormWrap').style.display='none';
-    document.getElementById('bookSuccess').classList.add('show');
-    ['bk-date','bk-time','bk-address','bk-notes'].forEach(id=>document.getElementById(id).value='');
+    if(currentUser) localStorage.setItem('tehcs_ph_'+currentUser.uid,phone);
+    await new Promise(r=>setTimeout(r,500));
+    document.getElementById('bkForm').style.display='none';
+    document.getElementById('bkSuccess').classList.add('show');
+    ['bk-date','bk-time','bk-addr','bk-phone','bk-notes'].forEach(id=>document.getElementById(id).value='');
+    document.getElementById('bk-svc-sel').value='';
 
-  } catch(e) {
-    console.error(e);
-    showToast('Error submitting. Please try again.','error');
+  }catch(e){
+    console.error('Booking error:',e);
+    ['s1','s2','s3'].forEach(id=>setStep(id,'wait'));
+    document.getElementById('stepsBox').classList.remove('show');
+    showBkErr('Error: '+(e.text||e.message||'Please try again or call us directly.'));
+    btn.textContent='Confirm Booking'; btn.disabled=false;
   }
-  btn.textContent='Confirm Booking'; btn.disabled=false;
 };
 
-/* ── CHAT ── */
-function listenChat() {
-  if (!currentUser) return;
-  const q = query(collection(db,'chats'),where('uid','==',currentUser.uid),orderBy('createdAt','asc'));
-  onSnapshot(q, snap => {
-    const box = document.getElementById('chatMessages');
+function showBkErr(msg){
+  const el=document.getElementById('bkErr');
+  el.textContent='⚠️ '+msg; el.classList.add('show');
+}
+
+function setStep(id,state){
+  const el=document.getElementById(id);
+  const dot=el.querySelector('.step-dot');
+  el.className='step-row '+state;
+  dot.textContent=state==='done'?'✓':state==='active'?'•':el.dataset.n||'';
+}
+
+/* ══ CHAT ══ */
+function listenChat(){
+  if(!currentUser)return;
+  const q=query(collection(db,'chats'),where('uid','==',currentUser.uid),orderBy('createdAt','asc'));
+  onSnapshot(q,snap=>{
+    const box=document.getElementById('chatMsgs');
     box.querySelectorAll('.user-msg,.agent-msg').forEach(e=>e.remove());
     snap.docs.forEach(d=>{
-      const m=d.data(); if(!m.text) return;
+      const m=d.data(); if(!m.text)return;
       const div=document.createElement('div');
-      div.className=m.from==='client'?'user-msg':'agent-msg';
-      div.style.marginBottom='4px';
-      div.innerHTML=m.from==='client'
-        ?`<div style="text-align:right"><div class="chat-bubble me">${m.text}</div><div class="chat-time chat-me-time">${fmtT(m.createdAt)}</div></div>`
-        :`<div class="chat-agent-row"><div class="mini-avatar">T</div><div class="mini-name">TEHCS</div></div><div class="chat-bubble them">${m.text}</div><div class="chat-time chat-them-time">${fmtT(m.createdAt)}</div>`;
+      div.style.marginBottom='5px';
+      if(m.from==='client'){
+        div.className='user-msg';
+        div.innerHTML=`<div style="text-align:right;"><div class="bubble me">${esc(m.text)}</div><div class="chat-time" style="text-align:right;">${fmtT(m.createdAt)}</div></div>`;
+      } else {
+        div.className='agent-msg';
+        div.innerHTML=`
+          <div style="display:flex;align-items:center;gap:5px;margin-bottom:3px;">
+            <div style="width:20px;height:20px;border-radius:50%;background:var(--gold);color:var(--navy-dk);font-family:'Barlow Condensed',sans-serif;font-size:.55rem;font-weight:900;display:flex;align-items:center;justify-content:center;">T</div>
+            <span style="font-size:.65rem;font-weight:600;color:var(--tmid);">TEHCS Team</span>
+          </div>
+          <div class="bubble them">${esc(m.text)}</div>
+          <div class="chat-time">${fmtT(m.createdAt)}</div>`;
+      }
       box.appendChild(div);
     });
     box.scrollTop=box.scrollHeight;
-  });
+  },err=>console.error('Chat listener error:',err.code));
 }
 
-window.sendMsg = async function() {
-  const inp=document.getElementById('chatInput');
+window.sendMsg=async function(){
+  const inp=document.getElementById('chatInp');
   const txt=inp.value.trim();
-  if(!txt||!currentUser) return;
+  if(!txt||!currentUser)return;
   inp.value=''; inp.style.height='auto';
-  await addDoc(collection(db,'chats'),{
-    uid:currentUser.uid, name:currentUser.displayName||currentUser.email,
-    email:currentUser.email, text:txt, from:'client', createdAt:serverTimestamp()
-  });
+  try{
+    await addDoc(collection(db,'chats'),{
+      uid:currentUser.uid, name:currentUser.displayName||currentUser.email,
+      email:currentUser.email, text:txt, from:'client', createdAt:serverTimestamp()
+    });
+  }catch(e){ console.error('Chat send error:',e.code,e.message); showToast('Failed to send. Check connection.','error'); }
 };
 
-window.qReply = function(btn) {
-  document.getElementById('chatInput').value=btn.textContent;
-  sendMsg();
-};
+window.sendQR=function(txt){ document.getElementById('chatInp').value=txt; sendMsg(); };
 
-/* ── NAVIGATION ── */
-window.showTab = function(name) {
+/* ══ NAV ══ */
+window.goTab=function(name){
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
-  document.querySelectorAll('.tab-item').forEach(t=>t.classList.remove('active'));
-  if (name==='book') { openBook('Select a Service','🔧'); return; }
-  const pg=document.getElementById('page-'+name);
-  if(pg) pg.classList.add('active');
-  const tb=document.getElementById('tab-'+name);
-  if(tb) tb.classList.add('active');
+  document.querySelectorAll('.tab-btn').forEach(t=>t.classList.remove('active'));
+  const pg=document.getElementById('pg-'+name); if(pg)pg.classList.add('active');
+  const tb=document.getElementById('tb-'+name); if(tb)tb.classList.add('active');
   document.getElementById('appScroll').scrollTop=0;
 };
 
-window.filterSvcs = function(v) {
+window.filterSvcs=function(v){
   document.querySelectorAll('.svc-chip').forEach(c=>{
-    c.style.display=c.dataset.name.toLowerCase().includes(v.toLowerCase())||!v?'':'none';
+    c.style.display=!v||c.dataset.n.toLowerCase().includes(v.toLowerCase())?'':'none';
   });
 };
 
-/* ── SHARE & INSTALL ── */
-window.doShare=function(){
-  navigator.share?navigator.share({title:'TEHCS App',text:'Book home care services with TEHCS!',url:'https://tehcs.com/app'}):navigator.clipboard.writeText('https://tehcs.com/app').then(()=>showToast('Link copied!','success'));
-};
-let deferredPrompt;
-window.addEventListener('beforeinstallprompt',e=>{
-  e.preventDefault(); deferredPrompt=e;
-  setTimeout(()=>document.getElementById('installBanner').classList.add('show'),4000);
-});
-window.doInstall=function(){
-  if(!deferredPrompt) return;
-  deferredPrompt.prompt();
-  deferredPrompt.userChoice.then(()=>{deferredPrompt=null;document.getElementById('installBanner').classList.remove('show');});
-};
-
-/* ── HELPERS ── */
-window.showToast=function(msg,type=''){
-  const t=document.getElementById('toast');
-  t.textContent=msg; t.className='toast show '+type;
-  setTimeout(()=>t.classList.remove('show'),3000);
-};
-function fmtT(ts){
-  if(!ts) return '';
-  const d=ts.toDate?ts.toDate():new Date(ts);
-  return d.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'});
-}
-
+/* ── SERVICE WORKER ── */
 if('serviceWorker' in navigator) navigator.serviceWorker.register('../sw.js').catch(()=>{});
 </script>
 
