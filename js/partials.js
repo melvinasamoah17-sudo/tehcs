@@ -76,7 +76,7 @@
     <div class="footer-bot">
       <p>&copy; 2026 TEHCS &mdash; Twitch Empire Home Care Service. All rights reserved.</p>
       <div>
-        <a href="#">Privacy Policy</a>
+        <a href="tehcs_privacy_policy.html">Privacy Policy</a>
         <a href="#">Terms of Service</a>
         <a href="#">Accessibility</a>
       </div>
