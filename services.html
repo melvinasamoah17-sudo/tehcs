@@ -3,10 +3,14 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="icon" type="image/x-icon" href="/favicon.ico">
-<link rel="icon" type="image/png" sizes="32x32" href="/favicon.ico">
-<link rel="apple-touch-icon" href="/apple-touch-icon.png">
-  <title>Services — TEHCS</title>
+<title>Services — TEHCS</title>
+  <link rel="icon" href="/favicon.ico" sizes="any">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+  <link rel="manifest" href="/site.webmanifest">
+  <meta name="theme-color" content="#101D3F">
+  <meta name="apple-mobile-web-app-title" content="TEHCS">
   <meta name="description" content="Home Health Care, Construction and Non-Medical services from TEHCS — Ghana and the UK.">
   <link rel="stylesheet" href="css/styles.css">
   <link rel="stylesheet" href="css/services.css">
@@ -32,12 +36,23 @@
 <section class="pad-section bg-off">
   <div class="container">
 
-    <!-- TABS -->
-    <div class="svc-tabs rv">
-      <button class="tab-btn active" data-tab="health">🩺 Home Health Care</button>
-      <button class="tab-btn"        data-tab="construction">🏗️ Construction</button>
-      <button class="tab-btn"        data-tab="nonmedical">🏡 Non-Medical</button>
+    <!-- SEARCH + TABS -->
+    <div class="svc-search rv">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+      <input type="search" id="svc-search" placeholder="Search all services" aria-label="Search all services" autocomplete="off">
     </div>
+
+    <div class="svc-tabs rv" role="tablist" aria-label="Service categories">
+      <button class="tab-btn active" data-tab="all" role="tab" aria-selected="true">All</button>
+      <button class="tab-btn" data-tab="health" role="tab" aria-selected="false">Home Health Care</button>
+      <button class="tab-btn" data-tab="construction" role="tab" aria-selected="false">Construction</button>
+      <button class="tab-btn" data-tab="nonmedical" role="tab" aria-selected="false">Non-Medical</button>
+    </div>
+
+    <!-- phone view: swipeable stacked cards (built by js/services.js) -->
+    <section class="svc-carousel" id="svc-carousel" aria-label="Browse services" hidden></section>
+
+    <p class="svc-empty" id="svc-empty" hidden>No services match that search. <a href="contact.html">Tell us what you need</a> and we’ll find the right person.</p>
 
     <!-- ── PANEL: HEALTH ── -->
     <div class="svc-panel" id="panel-health" style="display:grid">
@@ -184,5 +199,6 @@
 <div id="footer-mount"></div>
 <script src="js/partials.js"></script>
 <script src="js/main.js"></script>
+<script src="js/services.js"></script>
 </body>
 </html>

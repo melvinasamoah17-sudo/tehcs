@@ -4,10 +4,14 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>TEHCS — Twitch Empire Home Care Service</title>
- <link rel="icon" type="image/x-icon" href="/favicon.ico">
-<link rel="icon" type="image/png" sizes="32x32" href="/favicon.ico">
-<link rel="apple-touch-icon" href="/apple-touch-icon.png">
-  <meta name="description" content="Reliable Home Health Care, Construction and Non-Health Care Service Provider in Ghana and the UK.">
+  <link rel="icon" href="/favicon.ico" sizes="any">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+  <link rel="manifest" href="/site.webmanifest">
+  <meta name="theme-color" content="#101D3F">
+  <meta name="apple-mobile-web-app-title" content="TEHCS">
+<meta name="description" content="Reliable Home Health Care, Construction and Non-Health Care Service Provider in Ghana and the UK.">
   <link rel="stylesheet" href="css/styles.css">
   <link rel="stylesheet" href="css/home.css">
 </head>
@@ -145,59 +149,33 @@
 
     <div class="svc-preview-grid">
 
-      <!-- Health -->
-      <div class="svc-preview-card rv">
-        <div class="spc-img">
-          <img
-            src="https://images.unsplash.com/photo-1582750433449-648ed127bb54?w=700&q=80&fit=crop&crop=center"
-            alt="Black home health care professional with patient"
-            loading="lazy"
-          >
-          <div class="spc-img-overlay"></div>
+      <article class="cat-card cat-h rv">
+        <div class="cat-top">
+          <svg class="cat-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>
+          <a href="services.html#health" class="cat-go">View services <span aria-hidden="true">→</span></a>
         </div>
-        <div class="spc-body">
-          <span class="tag tag-h">Health Care</span>
-          <h3>Home Health Care Services</h3>
-          <p>Professional doctors, personal care, senior care, occupational therapy, warm companionship, medication reminders and pharmacist support.</p>
-          <a href="services.html" class="spc-link">View Services →</a>
+        <h3>Home Health Care</h3>
+        <p class="cat-sub">Personal Care · Senior Care · Doctors · Therapy</p>
+        <div class="cat-chips"><span class="cat-chip">Professional Doctors</span><span class="cat-chip">Personal Care</span><span class="cat-chip">Senior Care</span><span class="cat-chip">Companionship</span><span class="cat-chip">Medication Reminders</span></div>
+      </article>
+      <article class="cat-card cat-c rv" data-delay="110">
+        <div class="cat-top">
+          <svg class="cat-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
+          <a href="services.html#construction" class="cat-go">View services <span aria-hidden="true">→</span></a>
         </div>
-      </div>
-
-      <!-- Construction -->
-      <div class="svc-preview-card rv" data-delay="110">
-        <div class="spc-img">
-          <img
-            src="https://images.unsplash.com/photo-1541888946425-d81bb19240f5?w=700&q=80&fit=crop&crop=center"
-            alt="Black construction workers on site"
-            loading="lazy"
-          >
-          <div class="spc-img-overlay"></div>
+        <h3>Construction</h3>
+        <p class="cat-sub">Plumbing · Electrical · Building · Renovation</p>
+        <div class="cat-chips"><span class="cat-chip">Plumbing</span><span class="cat-chip">Electrical Work</span><span class="cat-chip">Painting</span><span class="cat-chip">Building Work</span></div>
+      </article>
+      <article class="cat-card cat-n rv" data-delay="220">
+        <div class="cat-top">
+          <svg class="cat-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8"/><path d="M3 10a2 2 0 0 1 .709-1.528l7-5.999a2 2 0 0 1 2.582 0l7 5.999A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
+          <a href="services.html#nonmedical" class="cat-go">View services <span aria-hidden="true">→</span></a>
         </div>
-        <div class="spc-body">
-          <span class="tag tag-c">Construction</span>
-          <h3>Construction Services</h3>
-          <p>Gardeners, painters, interior decorators, plumbers, electricians, carpentry works and full building constructors.</p>
-          <a href="services.html" class="spc-link">View Services →</a>
-        </div>
-      </div>
-
-      <!-- Non-medical -->
-      <div class="svc-preview-card rv" data-delay="220">
-        <div class="spc-img">
-          <img
-            src="https://images.unsplash.com/photo-1563453392212-326f5e854473?w=700&q=80&fit=crop&crop=center"
-            alt="Professional Black housekeeper cleaning"
-            loading="lazy"
-          >
-          <div class="spc-img-overlay"></div>
-        </div>
-        <div class="spc-body">
-          <span class="tag tag-n">Non-Medical</span>
-          <h3>Non-Medical Services</h3>
-          <p>Housekeepers, nannies, cooks/chefs, laundry, hotel keepers, office cleaners, grocery shoppers, drivers and ushers.</p>
-          <a href="services.html" class="spc-link">View Services →</a>
-        </div>
-      </div>
+        <h3>Non-Medical Services</h3>
+        <p class="cat-sub">Housekeeping · Childcare · Cooks · Drivers</p>
+        <div class="cat-chips"><span class="cat-chip">Housekeeping</span><span class="cat-chip">Nannies</span><span class="cat-chip">Cooks / Chefs</span><span class="cat-chip">Laundry</span></div>
+      </article>
 
     </div>
 
