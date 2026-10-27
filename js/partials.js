@@ -19,11 +19,14 @@
       <li><a href="services.html">Services</a></li>
       <li><a href="about.html">About Us</a></li>
       <li><a href="process.html">Our Process</a></li>
-      <li><a href="contact.html" class="nav-cta">Contact Us</a></li>
     </ul>
-    <button class="burger" aria-label="Toggle menu">
-      <span></span><span></span><span></span>
-    </button>
+    <div class="nav-end">
+      <a href="contact.html" class="nav-cta">Contact Us</a>
+      <button class="burger" aria-label="Toggle menu" aria-expanded="false" aria-controls="mobile-menu">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+    <div class="scroll-progress" aria-hidden="true"></div>
   </nav>`;
 
   /* ── FOOTER ── */
