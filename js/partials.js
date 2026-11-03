@@ -41,7 +41,7 @@
     <div class="logo-tag">Home Care Service</div>
   </div>
     </a>
-        <p>Reliable Home Health Care, Construction and Non-Health Care Service Provider. Serving families across Ghana and the United Kingdom.</p>
+        <p>Reliable Cleaning, Home Care, Medical, Non-Medical and Construction services. Serving families and businesses across Ghana and the United Kingdom.</p>
         <div class="footer-social">
           <a href="mailto:twitchempireinfo@gmail.com" class="soc-btn" title="Email">&#x2709;&#xFE0F;</a>
           <a href="tel:+447448468070" class="soc-btn" title="UK">&#x1F4DE;</a>
@@ -61,9 +61,11 @@
       <div class="footer-col">
         <h4>Services</h4>
         <ul>
-          <li><a href="services.html">Home Health Care</a></li>
-          <li><a href="services.html">Construction</a></li>
-          <li><a href="services.html">Non-Medical</a></li>
+          <li><a href="services.html#cleaning">Cleaning</a></li>
+          <li><a href="services.html#homecare">Home Care</a></li>
+          <li><a href="services.html#medical">Medical</a></li>
+          <li><a href="services.html#nonmedical">Non-Medical</a></li>
+          <li><a href="services.html#construction">Construction</a></li>
         </ul>
       </div>
       <div class="footer-col">

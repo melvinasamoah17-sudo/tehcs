@@ -202,6 +202,8 @@
     .cat-h { background:rgba(245,166,35,.15); color:var(--gold-dk); }
     .cat-c { background:rgba(27,43,94,.1); color:var(--navy); }
     .cat-n { background:rgba(230,51,41,.1); color:var(--red); }
+    .cat-cl { background:rgba(36,113,163,.12); color:#1A4F78; }
+    .cat-m { background:rgba(14,110,134,.12); color:#0A4A5E; }
 
     /* ══ MODAL ══ */
     .modal-overlay { display:none; position:fixed; inset:0; z-index:300; background:rgba(16,29,63,.7); backdrop-filter:blur(6px); align-items:center; justify-content:center; padding:20px; }
@@ -406,7 +408,7 @@
           <div class="form-grid-2">
             <div class="fg"><label>Service Name *</label><input type="text" id="svc-name" placeholder="e.g. Senior Care"></div>
             <div class="fg"><label>Category *</label>
-              <select id="svc-cat"><option value="" disabled selected>Select...</option><option value="health">Home Health Care</option><option value="construction">Construction</option><option value="nonmedical">Non-Medical</option></select>
+              <select id="svc-cat"><option value="" disabled selected>Select...</option><option value="cleaning">Cleaning</option><option value="homecare">Home Care</option><option value="medical">Medical</option><option value="nonmedical">Non-Medical</option><option value="construction">Construction</option></select>
             </div>
             <div class="fg"><label>Icon (emoji)</label><input type="text" id="svc-icon" placeholder="👴" maxlength="4"></div>
             <div class="fg"><label>Status</label><select id="svc-status"><option value="active">Active</option><option value="inactive">Inactive</option></select></div>
@@ -687,8 +689,8 @@ async function loadServices() {
   try {
     const snap=await getDocs(collection(db,'services'));
     if(!snap.size){g.innerHTML='<div class="empty-state" style="grid-column:span 3"><span class="es-icon">🔧</span><p>No services yet.</p></div>';return;}
-    const cc={health:'cat-h',construction:'cat-c',nonmedical:'cat-n'};
-    const cl={health:'Health Care',construction:'Construction',nonmedical:'Non-Medical'};
+    const cc={cleaning:'cat-cl',homecare:'cat-h',health:'cat-h',medical:'cat-m',nonmedical:'cat-n',construction:'cat-c'};
+    const cl={cleaning:'Cleaning',homecare:'Home Care',health:'Home Care',medical:'Medical',nonmedical:'Non-Medical',construction:'Construction'};
     g.innerHTML=snap.docs.map(d=>{const s=d.data();return`
       <div class="svc-admin-card">
         <span class="svc-cat-tag ${cc[s.category]||'cat-h'}">${cl[s.category]||s.category}</span>

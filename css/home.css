@@ -152,9 +152,18 @@
 .sec-head p  { font-size:1rem; color:var(--tmid); font-weight:300; line-height:1.75; }
 
 /* ── SERVICES PREVIEW GRID ── */
+/* five cards: three across, then two wider ones */
 .svc-preview-grid {
-  display: grid; grid-template-columns: repeat(3,1fr); gap: 22px;
+  display: grid; grid-template-columns: repeat(6,1fr); gap: 22px;
   margin-bottom: 48px;
+}
+.svc-preview-grid > .cat-card { grid-column: span 2; }
+.svc-preview-grid > .cat-card:nth-child(n+4) { grid-column: span 3; }
+@media (max-width: 960px) {
+  .svc-preview-grid { grid-template-columns: 1fr 1fr; }
+  .svc-preview-grid > .cat-card,
+  .svc-preview-grid > .cat-card:nth-child(n+4) { grid-column: auto; }
+  .svc-preview-grid > .cat-card:last-child { grid-column: 1 / -1; }
 }
 .cat-card {
   position: relative; overflow: hidden; isolation: isolate;

@@ -397,6 +397,8 @@ a:focus-visible, button:focus-visible { outline: 2px solid var(--gold); outline-
    APP-STYLE CATEGORY COLOURS (match the TEHCS mobile app)
    Darkened enough that white text passes contrast.
 ============================================= */
-.cat-h { --c1:#D8322A; --c2:#A91E17; --cglow:rgba(216,50,42,.28); }
-.cat-c { --c1:#23813F; --c2:#165B2B; --cglow:rgba(35,129,63,.28); }
-.cat-n { --c1:#D91E85; --c2:#A8135F; --cglow:rgba(217,30,133,.28); }
+.cat-cl { --c1:#2471A3; --c2:#1A4F78; --cglow:rgba(36,113,163,.28); }  /* Cleaning */
+.cat-h  { --c1:#B8283F; --c2:#7A1A35; --cglow:rgba(184,40,63,.28); }   /* Home Care */
+.cat-m  { --c1:#0E6E86; --c2:#0A4A5E; --cglow:rgba(14,110,134,.28); }  /* Medical */
+.cat-n  { --c1:#5B3A9E; --c2:#3E2873; --cglow:rgba(91,58,158,.28); }   /* Non-Medical */
+.cat-c  { --c1:#23813F; --c2:#165B2B; --cglow:rgba(35,129,63,.28); }   /* Construction */

@@ -236,33 +236,9 @@
             </div>
             <div class="f-group">
               <label for="service">Service Needed</label>
-              <select id="service" name="service">
+              <select id="service" name="service" data-catalog>
                 <option value="" disabled selected>Select...</option>
-                <optgroup label="Home Health Care">
-                  <option>Doctor Visit</option>
-                  <option>Personal Care</option>
-                  <option>Senior Care</option>
-                  <option>Occupational Therapy</option>
-                  <option>Companionship</option>
-                  <option>Medication Reminders</option>
-                </optgroup>
-                <optgroup label="Construction">
-                  <option>Plumbing</option>
-                  <option>Electrical</option>
-                  <option>Painting</option>
-                  <option>Interior Decoration</option>
-                  <option>Carpentry</option>
-                  <option>Building</option>
-                  <option>Gardening</option>
-                </optgroup>
-                <optgroup label="Non-Medical">
-                  <option>Housekeeping</option>
-                  <option>Nanny / Childcare</option>
-                  <option>Cook / Chef</option>
-                  <option>Laundry</option>
-                  <option>Driver</option>
-                  <option>Office Cleaning</option>
-                </optgroup>
+                <!-- one group per category, filled from js/catalog.js -->
                 <option>Multiple Services</option>
                 <option>Other</option>
               </select>
@@ -290,21 +266,21 @@
     <div class="qt-grid rv">
       <div class="qt-card">
         <span>🩺</span>
-        <h4>Need Home Health Care?</h4>
+        <h4>Need Medical or Home Care?</h4>
         <p>We can arrange a professional nurse or doctor visit within 24–72 hours.</p>
-        <a href="services.html">Learn More →</a>
+        <a href="services.html#medical">Learn More →</a>
       </div>
       <div class="qt-card">
         <span>🏗️</span>
         <h4>Construction Project?</h4>
         <p>From single trades to full builds — free quotes and transparent pricing.</p>
-        <a href="services.html">Learn More →</a>
+        <a href="services.html#construction">Learn More →</a>
       </div>
       <div class="qt-card">
         <span>🏡</span>
         <h4>Household Support?</h4>
-        <p>Cleaners, cooks, nannies, drivers — reliable support for everyday life.</p>
-        <a href="services.html">Learn More →</a>
+        <p>Cleaners, childcare, errands, drivers — reliable support for everyday life.</p>
+        <a href="services.html#nonmedical">Learn More →</a>
       </div>
     </div>
   </div>
@@ -312,6 +288,7 @@
 
 <div id="footer-mount"></div>
 <script src="js/partials.js"></script>
+<script src="js/catalog.js"></script>
 <script src="js/main.js"></script>
 
 <!-- Firebase + Form Handler -->

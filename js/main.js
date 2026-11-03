@@ -131,6 +131,18 @@
 
     /* ── PRE-FILL CONTACT FORM FROM ?service= ── */
     var svcSelect = document.getElementById('service');
+    /* build the dropdown from js/catalog.js so it always matches the services page */
+    if (svcSelect && svcSelect.hasAttribute('data-catalog') && window.TEHCS_CATALOG) {
+      var before = svcSelect.querySelector('option:not([value=""])');
+      window.TEHCS_CATALOG.forEach(function (cat) {
+        var og = document.createElement('optgroup');
+        og.label = cat.label;
+        cat.groups.forEach(function (g) {
+          g.services.forEach(function (s) { og.appendChild(new Option(s[0])); });
+        });
+        svcSelect.insertBefore(og, before);
+      });
+    }
     if (svcSelect && window.URLSearchParams) {
       var want = new URLSearchParams(window.location.search).get('service');
       if (want) {
