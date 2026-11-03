@@ -45,7 +45,7 @@
         <div class="footer-social">
           <a href="mailto:twitchempireinfo@gmail.com" class="soc-btn" title="Email">&#x2709;&#xFE0F;</a>
           <a href="tel:+447448468070" class="soc-btn" title="UK">&#x1F4DE;</a>
-          <a href="tel:+233240699329" class="soc-btn" title="Ghana">&#x1F4F1;</a>
+          <a href="tel:+233505108071" class="soc-btn" title="Ghana">&#x1F4F1;</a>
         </div>
       </div>
       <div class="footer-col">
@@ -72,7 +72,7 @@
         <h4>Contact</h4>
         <ul>
           <li><a href="tel:+447448468070">+44 7448 468070 (UK)</a></li>
-          <li><a href="tel:+233240699329">+233 240 699 329 (GH)</a></li>
+          <li><a href="tel:+233505108071">050 510 8071 (GH)</a></li>
           <li><a href="tel:0302449719">030 244 9719 (Landline)</a></li>
           <li><a href="mailto:twitchempireinfo@gmail.com">twitchempireinfo@gmail.com</a></li>
         </ul>
